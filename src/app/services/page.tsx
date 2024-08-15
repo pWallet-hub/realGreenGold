@@ -2,7 +2,8 @@ import React from 'react'
 import NavBar from '../components/NavBar'
 import Footer from '../components/Footer'
 import Image from 'next/image'
-import AboutUsSection from '../components/AboutUsSection'
+import SSPCommunityProduction from '../components/SSPCommunityProduction'
+import AgriculturalInnovationAndLogistics from '../components/AgriculturalInnovationAndLogistics'
 
 export default function Service() {
   return (
@@ -22,7 +23,8 @@ export default function Service() {
             <h1 className="text-6xl font-bold mb-4">Services</h1>
           </div>
         </section>
-        <AboutUsSection/>
+        <SSPCommunityProduction/>
+        <AgriculturalInnovationAndLogistics/>
       </main>
       <Footer/>
       </div>

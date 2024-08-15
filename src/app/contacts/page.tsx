@@ -4,6 +4,7 @@ import Footer from '../components/Footer'
 import Image from 'next/image'
 import AboutUsSection from '../components/AboutUsSection'
 
+
 export default function Contacts() {
   return (
     <div className="min-h-screen flex flex-col">
@@ -23,6 +24,7 @@ export default function Contacts() {
           </div>
         </section>
         <AboutUsSection/>
+        
         </main>
       <Footer />
       </div>

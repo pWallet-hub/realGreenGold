@@ -4,6 +4,7 @@ import NavBar from '../components/NavBar'
 import Footer from '../components/Footer'
 import AboutUsSection from '../components/AboutUsSection'
 import MissionVisionSection from '../components/MissionVisionSection'
+import OurPartners from '../components/OurPartners'
 
 export default function About() {
   return (
@@ -25,6 +26,7 @@ export default function About() {
         </section>
         <AboutUsSection/>
         <MissionVisionSection/>
+        <OurPartners/>
       </main>
       <Footer />
     </div>

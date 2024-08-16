@@ -3,9 +3,9 @@ import React from 'react';
 import Image from 'next/image';
 
 const partners = [
-  { name: 'Alliance for Science Rwanda', logo: '/path-to-alliance-for-science-rwanda-logo.png' },
-  { name: 'Ingolstadt School of Management', logo: '/path-to-ingolstadt-school-of-management-logo.png' },
-  { name: 'FICCI', logo: '/assets/home.jpgg' },
+  { name: 'Alliance for Science Rwanda', logo: '/assets/home.jpg' },
+  { name: 'Ingolstadt School of Management', logo: '/assets/home.jpg' },
+  { name: 'FICCI', logo: '/assets/home.jpg' },
   { name: 'USAID', logo: '/assets/home.jpg' },
   { name: 'RYAF', logo: '/assets/home.jpg' },
   { name: 'YPARD', logo: '/assets/home.jpg' },

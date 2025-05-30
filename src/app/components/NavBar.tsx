@@ -25,9 +25,15 @@ const NavBar = () => {
     <nav className="fixed top-0 left-0 right-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between py-4">
-          <Link href="/">
-            <Image src="/assets/log.png" alt="Real Green Gold" width={150} height={50} />
-          </Link>
+        <Link href="/">
+  <Image
+    src="/assets/real.jpg"
+    alt="Real Green Gold"
+    width={80}
+    height={50}
+    style={{ borderRadius: '40px' }} // Adjust the radius value as needed (e.g., '8px', '10px', etc.)
+  />
+</Link>
           <div className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
               <Link

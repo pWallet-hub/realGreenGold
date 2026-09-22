@@ -1,47 +1,64 @@
+// app/components/ServisSection.tsx
 import Image from 'next/image';
 import Link from 'next/link';
+import { ArrowRight, Leaf, Sprout } from 'lucide-react';
 
 const ServiceSection = () => {
   const services = [
     {
-      title: "Small Scale Producer Community Production",
-      description: "Supporting and training SSPs to enhance their production capabilities.",
+      title: "Avocado & Crop Value Chain",
+      description: "Cultivating quality avocados, bananas, and fresh vegetables connected directly with market access and soil health.",
       image: "/assets/home.jpg",
-      alt: "Aerial view of agricultural landscape"
+      alt: "RGG Ltd Avocado and Crop Production in Kirehe",
+      link: "/initiatives#avocado"
     },
     {
-      title: "Agricultural Innovation Promotion",
-      description: "Demonstrating and training on advanced farming techniques and technologies.",
+      title: "Agricultural Innovation & Learning",
+      description: "Demonstrating irrigation, zero-grazing composting, and pollinator stewardship for small-scale producer communities.",
       image: "/assets/home.jpg",
-      alt: "Close-up of plantain leaves"
+      alt: "Agricultural Demonstration Plot at Real Green Gold Ltd",
+      link: "/initiatives#tech-seed-plotting"
     }
   ];
 
   return (
-    <section className="py-16 px-4 max-w-6xl mx-auto">
-      <h2 className="text-4xl font-bold text-center mb-2">Our Service</h2>
-      <div className="w-24 h-1 bg-yellow-400 mx-auto mb-12"></div>
-      
+    <section className="py-20 px-6 max-w-6xl mx-auto">
+      <div className="text-center space-y-2 mb-12">
+        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#A9812F]">
+          Core Pillars
+        </p>
+        <h2 className="text-3xl md:text-4xl font-bold italic text-[#1E2620]" style={{ fontFamily: 'var(--font-display)' }}>
+          Our Agricultural Services
+        </h2>
+        <div className="w-16 h-0.5 bg-[#A9812F] mx-auto mt-3"></div>
+      </div>
+
       <div className="grid md:grid-cols-2 gap-8">
         {services.map((service, index) => (
-          <div key={index} className="flex flex-col items-center">
-            <div className="relative w-full h-64 mb-6">
-              <Image
-                src={service.image}
-                alt={service.alt}
-                layout="fill"
-                objectFit="cover"
-                className="rounded-lg shadow-lg"
-              />
-              <div className="absolute inset-0 bg-black bg-opacity-10 rounded-lg"></div>
+          <div key={index} className="group border border-[#D9D4C6] bg-white p-6 shadow-xs flex flex-col justify-between">
+            <div>
+              <div className="relative w-full h-64 mb-6 overflow-hidden bg-[#1E2620] border border-[#D9D4C6]">
+                <Image
+                  src={service.image}
+                  alt={service.alt}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+              <h3 className="text-xl font-bold italic text-[#1E2620] mb-2" style={{ fontFamily: 'var(--font-display)' }}>
+                {service.title}
+              </h3>
+              <p className="text-xs text-[#5A6259] leading-relaxed mb-6">
+                {service.description}
+              </p>
             </div>
-            <h3 className="text-xl font-semibold text-center mb-2">{service.title}</h3>
-            <p className="text-center mb-4">{service.description}</p>
-            <Link href="/learn-more" className="bg-yellow-400 text-black px-6 py-2 rounded-full text-sm font-semibold hover:bg-yellow-500 transition-colors flex items-center">
-              Learn More
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
+
+            <Link
+              href={service.link}
+              className="inline-flex items-center gap-2 border border-[#1E2620] bg-white px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-[#1E2620] hover:bg-[#1E2620] hover:text-white transition-colors self-start"
+            >
+              Explore Details <ArrowRight size={13} />
             </Link>
           </div>
         ))}

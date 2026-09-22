@@ -43,13 +43,13 @@ export default function Home() {
 
             <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
               <Link
-                href="/about-us"
+                href="/about"
                 className="border border-[#3F6B4F] bg-[#3F6B4F] text-white px-7 py-3 text-xs font-semibold uppercase tracking-wider hover:bg-[#345A42] transition-colors"
               >
                 About Our Farm
               </Link>
               <Link
-                href="/initiatives"
+                href="/services"
                 className="border border-[#D9D4C6] bg-white/10 text-[#FAF9F5] px-7 py-3 text-xs font-semibold uppercase tracking-wider backdrop-blur-sm hover:bg-white hover:text-[#1E2620] transition-colors"
               >
                 Explore Initiatives

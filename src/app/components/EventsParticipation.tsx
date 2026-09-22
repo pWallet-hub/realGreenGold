@@ -22,7 +22,7 @@ const EventsParticipation = () => {
 
           <div className="pt-2">
             <Link
-              href="/blogs-gallery"
+              href="/projects"
               className="inline-flex items-center gap-2 border border-[#1E2620] bg-white px-6 py-3 text-xs font-semibold uppercase tracking-wider text-[#1E2620] hover:bg-[#1E2620] hover:text-white transition-colors"
             >
               View Documented Archives

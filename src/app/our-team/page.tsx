@@ -69,7 +69,7 @@ export default function OurTeamPage() {
             </h1>
             <div className="w-20 h-0.5 bg-[#A9812F] mx-auto"></div>
             <p className="text-xs sm:text-sm text-[#D9D4C6] max-w-2xl mx-auto leading-relaxed">
-              Real Green Gold Ltd grows through the people who care for the farm, organize its work, and share what they learn[cite: 3].
+              Real Green Gold Ltd grows through the people who care for the farm, organize its work, and share what they learn.
             </p>
           </div>
         </section>
@@ -89,11 +89,11 @@ export default function OurTeamPage() {
               </div>
 
               <p className="text-xs md:text-sm text-[#5A6259] leading-relaxed">
-                Real Green Gold Ltd grows through the people who care for the farm, organize its work, and share what they learn[cite: 3]. Our team approach brings practical experience together with curiosity about better ways of farming[cite: 3]. We value technology when it helps people perform useful tasks and make informed decisions[cite: 3].
+                Real Green Gold Ltd grows through the people who care for the farm, organize its work, and share what they learn. Our team approach brings practical experience together with curiosity about better ways of farming. We value technology when it helps people perform useful tasks and make informed decisions.
               </p>
 
               <p className="text-xs md:text-sm text-[#5A6259] leading-relaxed">
-                We are building a working culture that gives people clear responsibilities, supports learning, and welcomes contributions from the surrounding community[cite: 3]. Our goal is to create room for women, young people, and people with different experiences to participate meaningfully in the farm’s development[cite: 3].
+                We are building a working culture that gives people clear responsibilities, supports learning, and welcomes contributions from the surrounding community. Our goal is to create room for women, young people, and people with different experiences to participate meaningfully in the farm’s development.
               </p>
 
               <div className="pt-2">
@@ -120,7 +120,7 @@ export default function OurTeamPage() {
                   Community &amp; Team
                 </p>
                 <p className="text-xs italic mt-0.5">
-                  Building shared responsibility across crop care, irrigation, and learning[cite: 3].
+                  Building shared responsibility across crop care, irrigation, and learning.
                 </p>
               </div>
             </div>
@@ -157,12 +157,12 @@ export default function OurTeamPage() {
                     Pacifique Nshimiyimana
                   </h3>
                   <p className="text-[10px] font-bold uppercase tracking-wider text-[#A9812F] mt-0.5" style={{ fontFamily: 'var(--font-mono)' }}>
-                    Founder and CEO[cite: 3]
+                    Founder and CEO
                   </p>
                 </div>
 
                 <p className="text-xs md:text-sm text-[#5A6259] leading-relaxed">
-                  Pacifique founded Real Green Gold Ltd as his first business[cite: 3]. His background in biotechnology, agricultural enterprise, and farmer engagement informs the farm’s direction[cite: 3]. He connects the practical lessons of farming with a wider commitment to entrepreneurship and leadership that responds to community needs[cite: 3]. At RGG, his role is to guide strategy, build relationships, and support the team in translating ideas into workable activities[cite: 3].
+                  Pacifique founded Real Green Gold Ltd as his first business. His background in biotechnology, agricultural enterprise, and farmer engagement informs the farm’s direction. He connects the practical lessons of farming with a wider commitment to entrepreneurship and leadership that responds to community needs. At RGG, his role is to guide strategy, build relationships, and support the team in translating ideas into workable activities.
                 </p>
 
                 <div className="pt-2 border-t border-[#EDEAE0] flex flex-wrap gap-4">
@@ -190,7 +190,7 @@ export default function OurTeamPage() {
             </h2>
             <div className="w-16 h-0.5 bg-[#A9812F] mx-auto mt-2"></div>
             <p className="text-xs text-[#5A6259] pt-1">
-              Work on the farm is structured around clear operational coverage areas[cite: 3]. Team members hold specific responsibilities to ensure reliable production, animal husbandry, and visitor engagement[cite: 3].
+              Work on the farm is structured around clear operational coverage areas. Team members hold specific responsibilities to ensure reliable production, animal husbandry, and visitor engagement.
             </p>
           </div>
 
@@ -222,7 +222,7 @@ export default function OurTeamPage() {
               Learn with Us or Contribute a Skill
             </h2>
             <p className="text-xs sm:text-sm text-[#D9D4C6] max-w-2xl mx-auto leading-relaxed">
-              Interested in learning with us or contributing a practical skill? Tell us about your experience and the kind of collaboration you have in mind[cite: 3].
+              Interested in learning with us or contributing a practical skill? Tell us about your experience and the kind of collaboration you have in mind.
             </p>
 
             <div className="pt-4 flex justify-center">
@@ -231,7 +231,7 @@ export default function OurTeamPage() {
                 className="inline-flex items-center gap-2 border border-[#A9812F] bg-[#A9812F] text-white px-8 py-3.5 text-xs font-semibold uppercase tracking-wider hover:bg-[#8C6721] transition-colors"
                 style={{ fontFamily: 'var(--font-mono)' }}
               >
-                <HeartHandshake size={15} /> Discuss a Collaboration[cite: 3]
+                <HeartHandshake size={15} /> Discuss a Collaboration
               </Link>
             </div>
           </div>

@@ -35,11 +35,11 @@ const GetToKnowUs = () => {
             <div className="w-16 h-0.5 bg-[#A9812F]"></div>
 
             <p className="text-xs md:text-sm text-[#5A6259] leading-relaxed">
-              Real Green Gold Ltd was founded by Pacifique Nshimiyimana in Kirehe, Rwanda[cite: 5]. Our farm brings crop production together with livestock, pollinator stewardship, soil care, and practical agricultural learning[cite: 5].
+              Real Green Gold Ltd was founded by Pacifique Nshimiyimana in Kirehe, Rwanda. Our farm brings crop production together with livestock, pollinator stewardship, soil care, and practical agricultural learning.
             </p>
 
             <blockquote className="border-l-2 border-[#3F6B4F] pl-4 italic text-xs text-[#1E2620] bg-white p-3 border border-r-0 border-y-0">
-              &quot;A concern about water becomes a reason to explore irrigation[cite: 5]. Questions about soil fertility lead us to examine manure management and composting[cite: 5].&quot;
+              &quot;A concern about water becomes a reason to explore irrigation. Questions about soil fertility lead us to examine manure management and composting.&quot;
             </blockquote>
 
             <div>

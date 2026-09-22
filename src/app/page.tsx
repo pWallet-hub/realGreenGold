@@ -6,7 +6,7 @@ import Footer from './components/Footer';
 import ServiceSection from './components/ServisSection';
 import GetToKnowUs from './components/GetToKnowUs';
 import EventsParticipation from './components/EventsParticipation';
-import ContactStrip from './components/ContactStrip';
+import ContactStrip from '../components/ContactStrip';
 
 export default function Home() {
   return (

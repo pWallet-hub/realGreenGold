@@ -14,7 +14,7 @@ export default function ContactStrip() {
             Interested in our produce, farm learning, or a collaboration?
           </h3>
           <p className="text-xs text-[#D9D4C6]">
-            Tell us what you need and our team will respond[cite: 5].
+            Tell us what you need and our team will respond.
           </p>
         </div>
 

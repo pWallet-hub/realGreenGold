@@ -36,7 +36,7 @@ export default function Footer() {
             </div>
 
             <p className="text-xs text-[#D9D4C6] leading-relaxed max-w-md">
-              An integrated farm in Kirehe, Rwanda, producing avocado, banana, and fresh vegetables while exploring practical ways to connect crops, livestock, pollinators, soil care, and agricultural technology[cite: 5].
+              An integrated farm in Kirehe, Rwanda, producing avocado, banana, and fresh vegetables while exploring practical ways to connect crops, livestock, pollinators, soil care, and agricultural technology.
             </p>
 
             <div className="flex items-center gap-4 pt-2">
@@ -69,7 +69,7 @@ export default function Footer() {
             </p>
             <ul className="space-y-2 text-xs">
               <li>
-                <Link href="/about-us" className="text-[#D9D4C6] hover:text-white transition-colors">
+                <Link href="/about" className="text-[#D9D4C6] hover:text-white transition-colors">
                   About Us
                 </Link>
               </li>
@@ -121,10 +121,10 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-[#3F6B4F]/30 flex flex-col sm:flex-row items-center justify-between gap-4 text-[10px] text-[#D9D4C6]" style={{ fontFamily: 'var(--font-mono)' }}>
           <p>
-            Copyright © {currentYear} Real Green Gold Ltd. All rights reserved[cite: 5].
+            Copyright © {currentYear} Real Green Gold Ltd. All rights reserved.
           </p>
           <p className="text-[#8B9188]">
-            Kirehe, Rwanda • Sustainable Agriculture &amp; Farm Learning[cite: 5]
+            Kirehe, Rwanda • Sustainable Agriculture &amp; Farm Learning
           </p>
         </div>
       </div>

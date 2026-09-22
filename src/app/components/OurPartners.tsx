@@ -24,7 +24,7 @@ export default function OurPartners() {
           </h2>
           <div className="w-16 h-0.5 bg-[#A9812F] mx-auto mt-2"></div>
           <p className="text-xs text-[#5A6259] max-w-xl mx-auto pt-1">
-            Real Green Gold Ltd engages with institutions, youth networks, and agricultural initiatives to share field observations and explore practical value-chain solutions[cite: 6].
+            Real Green Gold Ltd engages with institutions, youth networks, and agricultural initiatives to share field observations and explore practical value-chain solutions.
           </p>
         </div>
 

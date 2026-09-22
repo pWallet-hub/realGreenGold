@@ -7,19 +7,19 @@ export default function MissionVisionSection() {
   const operatingValues = [
     {
       title: "Learn from real problems",
-      description: "We start with a clear need and examine whether a proposed solution is practical and affordable[cite: 6]."
+      description: "We start with a clear need and examine whether a proposed solution is practical and affordable."
     },
     {
       title: "Give people responsibility",
-      description: "We value clear tasks, opportunities to learn, and contributions from people with different experiences[cite: 6]."
+      description: "We value clear tasks, opportunities to learn, and contributions from people with different experiences."
     },
     {
       title: "Care for farm resources",
-      description: "We consider soil, water, biodiversity, and animal welfare in our day-to-day decisions[cite: 6]."
+      description: "We consider soil, water, biodiversity, and animal welfare in our day-to-day decisions."
     },
     {
       title: "Show the evidence",
-      description: "We aim to explain what is operating, what is being tested, and what remains an ambition[cite: 6]."
+      description: "We aim to explain what is operating, what is being tested, and what remains an ambition."
     }
   ];
 
@@ -44,7 +44,7 @@ export default function MissionVisionSection() {
             </h3>
             
             <p className="text-xs md:text-sm text-[#5A6259] leading-relaxed">
-              To produce food and develop practical agricultural approaches that create business value, support local livelihoods, and care for the resources on which farming depends[cite: 6].
+              To produce food and develop practical agricultural approaches that create business value, support local livelihoods, and care for the resources on which farming depends.
             </p>
 
             <div className="relative h-48 w-full border border-[#EDEAE0] bg-[#1E2620] mt-4">
@@ -72,7 +72,7 @@ export default function MissionVisionSection() {
             </h3>
 
             <p className="text-xs md:text-sm text-[#5A6259] leading-relaxed">
-              We are building a farm where production, learning, and enterprise development reinforce one another[cite: 6]. Our ambition is to document what works, improve what does not, and make useful learning accessible to customers, farmers, visitors, and collaborators[cite: 6].
+              We are building a farm where production, learning, and enterprise development reinforce one another. Our ambition is to document what works, improve what does not, and make useful learning accessible to customers, farmers, visitors, and collaborators.
             </p>
 
             <div className="relative h-48 w-full border border-[#EDEAE0] bg-[#1E2620] mt-4">
@@ -105,7 +105,7 @@ export default function MissionVisionSection() {
               <div key={idx} className="border border-[#D9D4C6] bg-white p-5 rounded-xs space-y-2">
                 <div className="flex items-center gap-2 text-[#3F6B4F]">
                   <CheckCircle2 size={15} />
-                  <h4 className="text-xs font-bold text-[#1E2620]">{val.title}[cite: 6]</h4>
+                  <h4 className="text-xs font-bold text-[#1E2620]">{val.title}</h4>
                 </div>
                 <p className="text-[11px] text-[#5A6259] leading-relaxed">
                   {val.description}

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import NavBar from '../components/NavBar';
 import Footer from '../components/Footer';
 import ContactStrip from '../components/ContactStrip';
-import { User, Sprout, HeartHandshake, ShieldCheck, ArrowUpRight, Award, Compass, BookOpen } from 'lucide-react';
+import { Sprout, HeartHandshake, ShieldCheck, ArrowUpRight, Compass, BookOpen } from 'lucide-react';
 
 export const metadata = {
   title: 'Our Team | Real Green Gold Ltd',

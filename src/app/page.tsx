@@ -1,4 +1,4 @@
-// app/page.tsx
+// src/app/page.tsx
 import Image from 'next/image';
 import Link from 'next/link';
 import NavBar from './components/NavBar';
@@ -6,12 +6,12 @@ import Footer from './components/Footer';
 import ServiceSection from './components/ServisSection';
 import GetToKnowUs from './components/GetToKnowUs';
 import EventsParticipation from './components/EventsParticipation';
-import ContactStrip from '../components/ContactStrip';
+import ContactStrip from './components/ContactStrip';
 
 export default function Home() {
   return (
     <>
-      {/* Global Header Navigation */}
+      {/* Navigation Header */}
       <NavBar />
 
       <main className="min-h-screen bg-[#FAF9F5] text-[#1E2620]">
@@ -38,8 +38,7 @@ export default function Home() {
             <div className="w-20 h-0.5 bg-[#A9812F] mx-auto"></div>
 
             <p className="text-sm md:text-lg text-[#D9D4C6] max-w-2xl mx-auto leading-relaxed">
-              We produce avocado, banana, and fresh vegetables while exploring practical ways to connect crops,
-              livestock, pollinators, soil care, and agricultural technology.
+              We produce avocado, banana, and fresh vegetables while exploring practical ways to connect crops, livestock, pollinators, soil care, and agricultural technology.
             </p>
 
             <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
@@ -68,7 +67,7 @@ export default function Home() {
         <ContactStrip />
       </main>
 
-      {/* Global Footer Navigation & Info */}
+      {/* Footer */}
       <Footer />
     </>
   );

@@ -17,7 +17,7 @@ const EventsParticipation = () => {
           <div className="w-16 h-0.5 bg-[#A9812F]"></div>
           
           <p className="text-xs md:text-sm text-[#5A6259] leading-relaxed">
-            Real Green Gold Ltd actively participates in regional initiatives to enhance agricultural innovation[cite: 5]. Working alongside community stakeholders and partners, we aim to improve crop value chains and support small-scale producers[cite: 5].
+            Real Green Gold Ltd actively participates in regional initiatives to enhance agricultural innovation. Working alongside community stakeholders and partners, we aim to improve crop value chains and support small-scale producers.
           </p>
 
           <div className="pt-2">

@@ -38,7 +38,8 @@ export default function Home() {
             <div className="w-20 h-0.5 bg-[#A9812F] mx-auto"></div>
 
             <p className="text-sm md:text-lg text-[#D9D4C6] max-w-2xl mx-auto leading-relaxed">
-              We produce avocado, banana, and fresh vegetables while exploring practical ways to connect crops, livestock, pollinators, soil care, and agricultural technology[cite: 5].
+              We produce avocado, banana, and fresh vegetables while exploring practical ways to connect crops,
+              livestock, pollinators, soil care, and agricultural technology.
             </p>
 
             <div className="flex flex-wrap items-center justify-center gap-4 pt-4">

@@ -3,7 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Compass, ArrowUpRight, Sprout, Users, BookOpen, Layers, Camera } from 'lucide-react';
+import { Compass, ArrowUpRight, Sprout, Users, Layers, Camera } from 'lucide-react';
 import NavBar from './components/NavBar';
 import Footer from './components/Footer';
 import FarmHighlights from './components/FarmHighlights';
@@ -83,8 +83,8 @@ export default function Home() {
             {/* Gold Divider Line */}
             <div className="w-16 h-0.5 bg-[#E5B800] mx-auto" />
 
-            {/* Core Message Text */}
-            <p className="text-sm sm:text-base md:text-lg text-[#FAF9F6]/85 max-w-2xl mx-auto leading-relaxed text-justify sm:text-center">
+            {/* Core Message Text (Justified) */}
+            <p className="text-sm sm:text-base md:text-lg text-[#FAF9F6]/85 max-w-2xl mx-auto leading-relaxed text-justify">
               An integrated farming enterprise in Kirehe, Rwanda. We produce avocado, banana, and fresh vegetables while exploring practical ways to connect crops, livestock, pollinators, soil care, and agricultural technology.
             </p>
 
@@ -149,6 +149,7 @@ export default function Home() {
                         {item.title}
                       </h2>
 
+                      {/* Card Description (Justified) */}
                       <p className="text-xs text-[#5A6259] leading-relaxed text-justify">
                         {item.description}
                       </p>
@@ -166,24 +167,18 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── 4. Core Focus Highlights ───────────────────────────────────── */}
         <FarmHighlights />
 
-        {/* ── 5. Founder Journey & Reflection ─────────────────────────────── */}
         <FounderStory />
 
-        {/* ── 6. Documented Field Moments & Archive ───────────────────────── */}
         <FarmMoments />
 
-        {/* ── 7. Institutional Partners Network ──────────────────────────── */}
         <OurPartners />
 
-        {/* ── 8. Global Inquiry & Contact Strip ───────────────────────────── */}
         <ContactStrip />
 
       </main>
 
-      {/* ── 9. Footer ─────────────────────────────────────────────────── */}
       <Footer />
     </>
   );

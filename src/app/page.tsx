@@ -3,9 +3,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import NavBar from './components/NavBar';
 import Footer from './components/Footer';
-import ServiceSection from './components/ServisSection';
-import GetToKnowUs from './components/GetToKnowUs';
-import EventsParticipation from './components/EventsParticipation';
+import FarmHighlights from './components/FarmHighlights';
+import FounderStory from './components/FounderStory';
+import FarmMoments from './components/FarmMoments';
 import ContactStrip from './components/ContactStrip';
 
 export default function Home() {
@@ -32,36 +32,62 @@ export default function Home() {
             </span>
 
             <h1 className="text-3xl md:text-6xl font-bold italic leading-tight" style={{ fontFamily: 'var(--font-display)' }}>
-              Empowering Small Producers with Innovation
+              Real Green Gold Ltd
             </h1>
 
             <div className="w-20 h-0.5 bg-[#A9812F] mx-auto"></div>
 
             <p className="text-sm md:text-lg text-[#D9D4C6] max-w-2xl mx-auto leading-relaxed">
-              We produce avocado, banana, and fresh vegetables while exploring practical ways to connect crops, livestock, pollinators, soil care, and agricultural technology.
+              An integrated farm and learning site exploring avocado, banana, vegetables, livestock, soil health, and practical agricultural innovation.
             </p>
 
             <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
               <Link
-                href="/about"
+                href="/about-us"
                 className="border border-[#3F6B4F] bg-[#3F6B4F] text-white px-7 py-3 text-xs font-semibold uppercase tracking-wider hover:bg-[#345A42] transition-colors"
               >
-                About Our Farm
+                About Us
               </Link>
               <Link
-                href="/services"
+                href="/initiatives"
                 className="border border-[#D9D4C6] bg-white/10 text-[#FAF9F5] px-7 py-3 text-xs font-semibold uppercase tracking-wider backdrop-blur-sm hover:bg-white hover:text-[#1E2620] transition-colors"
               >
-                Explore Initiatives
+                Initiatives
               </Link>
             </div>
           </div>
         </section>
 
+        <section className="mx-auto max-w-6xl px-6 py-20">
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+            {[
+              { title: 'About Us', href: '/about-us', text: 'Farm origin, founder journey, values and enquiry path.' },
+              { title: 'Our Team', href: '/our-team', text: 'Responsibility, community work and practical leadership.' },
+              { title: 'Initiatives', href: '/initiatives', text: 'Ten business and learning directions with enquiry flow.' },
+              { title: 'Blog', href: '/blogs', text: 'Featured stories, updates and field reflections.' },
+              { title: 'Gallery', href: '/gallery', text: 'Photo records from the farm, team and learning work.' },
+            ].map((item) => (
+              <Link
+                key={item.title}
+                href={item.href}
+                className="group border border-[#D9D4C6] bg-white p-6 shadow-xs transition-transform hover:-translate-y-1 hover:border-[#3F6B4F]"
+              >
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#A9812F]" style={{ fontFamily: 'var(--font-mono)' }}>
+                  Explore
+                </p>
+                <h2 className="mt-3 text-2xl font-bold italic text-[#1E2620]" style={{ fontFamily: 'var(--font-display)' }}>
+                  {item.title}
+                </h2>
+                <p className="mt-3 text-xs leading-relaxed text-[#5A6259]">{item.text}</p>
+              </Link>
+            ))}
+          </div>
+        </section>
+
         {/* Home Sections */}
-        <ServiceSection />
-        <GetToKnowUs />
-        <EventsParticipation />
+        <FarmHighlights />
+        <FounderStory />
+        <FarmMoments />
 
         {/* Global Contact Strip */}
         <ContactStrip />

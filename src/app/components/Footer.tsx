@@ -69,12 +69,7 @@ export default function Footer() {
             </p>
             <ul className="space-y-2 text-xs">
               <li>
-                <Link href="/" className="text-[#D9D4C6] hover:text-white transition-colors">
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link href="/about" className="text-[#D9D4C6] hover:text-white transition-colors">
+                <Link href="/about-us" className="text-[#D9D4C6] hover:text-white transition-colors">
                   About Us
                 </Link>
               </li>
@@ -89,8 +84,13 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/blogs-gallery" className="text-[#D9D4C6] hover:text-white transition-colors">
-                  Blogs &amp; Gallery
+                <Link href="/blogs" className="text-[#D9D4C6] hover:text-white transition-colors">
+                  Blog
+                </Link>
+              </li>
+              <li>
+                <Link href="/gallery" className="text-[#D9D4C6] hover:text-white transition-colors">
+                  Gallery
                 </Link>
               </li>
             </ul>

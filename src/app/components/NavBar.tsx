@@ -11,13 +11,13 @@ export default function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
-  // Exact 4 primary navigation routes defined in the RGG Content Plan
+  // Four primary navigation items as defined in the RGG content structure
   const navItems = [
-    { name: 'Home', path: '/' },
-    { name: 'About Us', path: '/about' },
-    { name: 'Initiatives', path: '/services' },
+    { name: 'About Us', path: '/about-us' },
     { name: 'Our Team', path: '/our-team' },
-    { name: 'Blogs & Gallery', path: '/projects' },
+    { name: 'Initiatives', path: '/initiatives' },
+    { name: 'Blog', path: '/blogs' },
+    { name: 'Gallery', path: '/gallery' },
   ];
 
   useEffect(() => {

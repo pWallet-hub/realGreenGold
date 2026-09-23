@@ -279,7 +279,7 @@ export default function BlogsPage() {
               </div>
 
               <blockquote className="text-sm sm:text-base font-normal italic leading-relaxed text-[#FAF9F6] border-l-2 border-[#E5B800] pl-3 text-justify">
-                "Real Green Gold Ltd began my entrepreneurial journey. The work of building an integrated farm in Kirehe continues to shape how I understand opportunity, responsibility, and leadership."
+                &ldquo;Real Green Gold Ltd began my entrepreneurial journey. The work of building an integrated farm in Kirehe continues to shape how I understand opportunity, responsibility, and leadership.&rdquo;
               </blockquote>
             </div>
           </div>

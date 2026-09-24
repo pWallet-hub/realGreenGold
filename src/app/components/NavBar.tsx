@@ -11,7 +11,7 @@ export default function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
-  // Four primary navigation items as defined in the RGG content structure
+  // Five primary navigation items as defined in the RGG content structure
   const navItems = [
     { name: 'About Us', path: '/about-us' },
     { name: 'Our Team', path: '/our-team' },
@@ -45,14 +45,15 @@ export default function NavBar() {
           <div className="flex items-center justify-between">
             
             {/* Brand Logo & Title */}
-            <Link href="/" className="flex items-center gap-3 group">
-              <div className="relative h-10 w-10 overflow-hidden border border-[#D9D4C6] bg-white p-1 rounded-xs transition-transform group-hover:scale-105">
+            <Link href="/" className="flex items-center gap-3.5 group">
+              {/* Circular, enlarged logo container */}
+              <div className="relative h-12 w-12 overflow-hidden rounded-full border border-[#D9D4C6] bg-white p-1 shadow-sm transition-transform duration-300 group-hover:scale-105 shrink-0">
                 <Image
                   src="/assets/real.jpg"
                   alt="Real Green Gold Ltd Logo"
                   fill
-                  sizes="40px"
-                  className="object-contain"
+                  sizes="48px"
+                  className="object-contain rounded-full p-0.5"
                   priority
                 />
               </div>
@@ -112,7 +113,7 @@ export default function NavBar() {
               <button
                 type="button"
                 onClick={toggleMenu}
-                className="border border-[#D9D4C6]/40 bg-[#1E2620]/80 p-2 text-[#FAF9F5] hover:border-[#FAF9F5] transition-colors rounded-xs"
+                className="border border-[#D9D4C6]/40 bg-[#1E2620]/80 p-2 text-[#FAF9F5] hover:border-[#FAF9F5] transition-colors rounded-xs cursor-pointer"
                 aria-label="Toggle Navigation Menu"
               >
                 {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -130,13 +131,13 @@ export default function NavBar() {
           {/* Drawer Top Header */}
           <div className="flex items-center justify-between border-b border-[#D9D4C6]/20 pb-4">
             <div className="flex items-center gap-3">
-              <div className="relative h-9 w-9 border border-[#D9D4C6] bg-white p-1 rounded-xs">
+              <div className="relative h-11 w-11 overflow-hidden rounded-full border border-[#D9D4C6] bg-white p-1 shrink-0">
                 <Image
-                  src="/image/biocap-logo.png"
+                  src="/assets/real.jpg"
                   alt="Real Green Gold Ltd Logo"
                   fill
-                  sizes="36px"
-                  className="object-contain"
+                  sizes="44px"
+                  className="object-contain rounded-full"
                 />
               </div>
               <span
@@ -150,14 +151,14 @@ export default function NavBar() {
             <button
               type="button"
               onClick={toggleMenu}
-              className="border border-[#D9D4C6]/40 p-2 text-[#FAF9F5] hover:bg-white/10 rounded-xs"
+              className="border border-[#D9D4C6]/40 p-2 text-[#FAF9F5] hover:bg-white/10 rounded-xs cursor-pointer"
             >
               <X size={20} />
             </button>
           </div>
 
           {/* Drawer Navigation Links */}
-          <div className="py-8 space-y-3">
+          <div className="py-8 space-y-3 flex-grow overflow-y-auto">
             <p
               className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#A9812F] mb-4"
               style={{ fontFamily: 'var(--font-mono)' }}
@@ -200,7 +201,7 @@ export default function NavBar() {
               Enquire About Produce
             </Link>
             <p className="text-[10px] text-center text-[#8B9188]">
-              Kirehe, Rwanda • info@realgreengoldltd.com[cite: 5]
+              Kirehe, Rwanda • info@realgreengoldltd.com
             </p>
           </div>
 

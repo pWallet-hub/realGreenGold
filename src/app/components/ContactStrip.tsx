@@ -14,7 +14,7 @@ import {
 
 export default function ContactStrip() {
   return (
-    <section className="bg-[#0C1E12] text-[#FAF9F6] border-t border-[#00A859]/30 py-16 px-6 md:px-12 selection:bg-[#E5B800] selection:text-[#0C1E12]">
+    <section className="bg-[#0a4b2c] text-[#FAF9F6] border-t border-[#00A859]/30 py-16 px-6 md:px-12 selection:bg-[#E5B800] selection:text-[#0C1E12]">
       <div className="max-w-6xl mx-auto space-y-12">
         
         {/* ── 1. Section Eyebrow & Location Tag ─────────────────────────── */}
@@ -89,7 +89,7 @@ export default function ContactStrip() {
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 border border-[#00A859]/40 bg-[#0C1E12] text-[#00A859]">
+                  <div className="p-2 border border-[#00A859]/40 bg-[#0a4b2c] text-[#00A859]">
                     <Sprout size={18} />
                   </div>
                   <div>
@@ -116,7 +116,7 @@ export default function ContactStrip() {
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 border border-[#00A859]/40 bg-[#0C1E12] text-[#00A859]">
+                  <div className="p-2 border border-[#00A859]/40 bg-[#0a4b2c] text-[#00A859]">
                     <Calendar size={18} />
                   </div>
                   <div>
@@ -143,7 +143,7 @@ export default function ContactStrip() {
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 border border-[#E5B800]/40 bg-[#0C1E12] text-[#E5B800]">
+                  <div className="p-2 border border-[#E5B800]/40 bg-[#0a4b2c] text-[#E5B800]">
                     <Building2 size={18} />
                   </div>
                   <div>

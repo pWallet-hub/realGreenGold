@@ -222,16 +222,20 @@ export default function InitiativesPage() {
       <main className="flex-grow space-y-12">
         
         {/* ── 1. Hero Header Section ──────────────────────────────────────── */}
-        <section className="relative h-[60vh] min-h-[500px] flex items-center justify-center overflow-hidden border-b border-[#00A859]/30 bg-[#0C1E12]">
+        <section className="relative h-[55vh] min-h-[480px] flex items-center justify-center overflow-hidden border-b border-[#00A859]/30 bg-[#0C1E12]">
           <Image
-            src="/assets/home.jpg"
-            alt="Real Green Gold Ltd farm initiative landscape in Kirehe, Rwanda"
-            fill
-            priority
-            quality={95}
-            className="object-cover object-center opacity-35 brightness-90 scale-105"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0C1E12] via-[#0C1E12]/50 to-transparent z-10" />
+    src="/assets/home.jpg"
+    alt="Real Green Gold Ltd farm initiative landscape in Kirehe, Rwanda"
+    fill
+    priority
+    quality={95}
+    sizes="100vw"
+    className="object-cover object-center brightness-60 contrast-[1.05] scale-105 transition-transform duration-1000"
+  />
+
+  {/* Transparent Gradient Overlays */}
+  <div className="absolute inset-0 bg-gradient-to-r from-[#0C1E12]/80 via-[#0C1E12]/50 to-transparent z-10" />
+  <div className="absolute inset-0 bg-gradient-to-t from-[#0C1E12]/90 via-transparent to-black/30 z-10" />
 
           <div className="relative z-20 max-w-4xl mx-auto px-6 text-center space-y-6 pt-12">
             <div className="inline-flex items-center gap-2 border border-[#E5B800]/60 bg-[#0C1E12]/80 backdrop-blur-md px-3.5 py-1 text-xs font-mono uppercase tracking-[0.2em] text-[#E5B800]">

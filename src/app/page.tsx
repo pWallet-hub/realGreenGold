@@ -52,7 +52,7 @@ export default function Home() {
       <main className="min-h-screen bg-[#FAF9F6] text-[#0C1E12] selection:bg-[#E5B800] selection:text-[#0C1E12]">
         
         {/* ── 2. Editorial Hero Section ───────────────────────────────────── */}
-        <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden border-b border-[#00A859]/30 bg-[#0C1E12]">
+        <section className="relative h-[55vh] min-h-[480px] flex items-center justify-center overflow-hidden border-b border-[#00A859]/30 bg-[#0C1E12]">
           
           {/* Authentic Farm Background Image */}
           <Image
@@ -74,7 +74,7 @@ export default function Home() {
 
             {/* Main Headline */}
             <h1 
-              className="text-4xl sm:text-6xl md:text-7xl font-normal leading-[1.08] text-[#FAF9F6]"
+              className="text-3xl sm:text-5xl md:text-6xl font-normal leading-[1.1] text-[#FAF9F6]"
               style={{ fontFamily: 'var(--font-display)' }}
             >
               Real Green Gold Ltd

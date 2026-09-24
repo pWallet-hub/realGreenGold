@@ -18,7 +18,7 @@ export default function AboutUsPage() {
 
       <main className="flex-grow">
         {/* ── Editorial Hero Header with Transparent Fixed Navigation Integration ── */}
-        <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden border-b border-[#00A859]/10 bg-[#0C1E12]">
+        <section className="relative h-[55vh] min-h-[480px] flex items-center justify-center overflow-hidden border-b border-[#00A859]/10 bg-[#0C1E12]">
           
           {/* Background Image Layer — Full Bleed Under Nav */}
           <Image
@@ -50,7 +50,7 @@ export default function AboutUsPage() {
 
                 {/* Main Headline */}
                 <h1
-                  className="text-4xl sm:text-5xl lg:text-[3.6rem] leading-[1.05] font-normal text-[#FAF9F6] drop-shadow-sm"
+                  className="text-4xl sm:text-5xl lg:text-[2.6rem] leading-[1.05] font-normal text-[#FAF9F6] drop-shadow-sm"
                   style={{ fontFamily: 'var(--font-display)' }}
                 >
                   A farm built from <span className="text-[#00A859] italic font-medium">questions</span>, not a business plan.

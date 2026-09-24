@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import Image from 'next/image';
 import NavBar from '../components/NavBar';
@@ -8,23 +10,17 @@ import OurPartners from '../components/OurPartners';
 import ContactStrip from '../components/ContactStrip';
 import { Sprout, MapPin, ArrowUpRight } from 'lucide-react';
 
-export const metadata = {
-  title: 'About Us | Real Green Gold Ltd',
-  description:
-    'Real Green Gold Ltd grows avocado, banana and fresh vegetables in Kirehe, Rwanda, alongside an integrated farm of livestock, pollinators and soil care.',
-};
-
 export default function AboutUsPage() {
   return (
     <div className="min-h-screen flex flex-col bg-[#FAF9F6] text-[#0C1E12] selection:bg-[#E5B800] selection:text-[#0C1E12]">
-      {/* Primary Global Navigation */}
+      {/* Primary Global Navigation (Transparent Fixed Header) */}
       <NavBar />
 
-      <main className="flex-grow pt-20">
-        {/* ── Editorial Hero Header with High Image Transparency ── */}
+      <main className="flex-grow">
+        {/* ── Editorial Hero Header with Transparent Fixed Navigation Integration ── */}
         <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden border-b border-[#00A859]/10 bg-[#0C1E12]">
           
-          {/* Background Image Layer — Increased Brightness for Better Visibility */}
+          {/* Background Image Layer — Full Bleed Under Nav */}
           <Image
             src="/assets/home.jpg"
             alt="Real Green Gold Ltd integrated farm in Kirehe, Rwanda"
@@ -35,12 +31,12 @@ export default function AboutUsPage() {
             className="object-cover object-center brightness-60 contrast-[1.05] scale-105 transition-transform duration-1000"
           />
 
-          {/* Transparent Gradient Overlays (Reduced Green/Dark Opacity) */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0C1E12]/75 via-[#0C1E12]/45 to-transparent z-10" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0C1E12]/80 via-transparent to-black/20 z-10" />
+          {/* Transparent Gradient Overlays */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0C1E12]/80 via-[#0C1E12]/50 to-transparent z-10" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0C1E12]/90 via-transparent to-black/30 z-10" />
 
-          {/* Content Container */}
-          <div className="relative z-20 max-w-6xl mx-auto px-6 md:px-12 py-24 w-full">
+          {/* Content Container — pt-32 ensures content clears the fixed transparent NavBar */}
+          <div className="relative z-20 max-w-6xl mx-auto px-6 md:px-12 pt-32 pb-24 w-full">
             <div className="grid lg:grid-cols-12 gap-12 items-center">
               
               {/* Main Typography Focus */}
@@ -83,7 +79,7 @@ export default function AboutUsPage() {
 
               </div>
 
-              {/* Spatial Metadata Card — Higher Transparency & Subtle Borders */}
+              {/* Spatial Metadata Card — Glassmorphism Effect */}
               <div className="lg:col-span-4 border border-white/20 bg-[#0C1E12]/55 backdrop-blur-md p-6 sm:p-8 space-y-5 text-[#FAF9F6] shadow-lg">
                 <div className="flex items-center justify-between border-b border-white/15 pb-3">
                   <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#E5B800]">

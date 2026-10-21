@@ -125,7 +125,7 @@ export default function OurTeamPage() {
               <span>Responsibility &amp; Livelihoods</span>
             </div>
 
-            <h1 className="text-3xl sm:text-5xl md:text-6xl font-semibold leading-[1.1] text-[#FAF9F6] tracking-tight">
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-semibold leading-[1.1] text-[#FAF9F6] tracking-tight">
               The People Who Make the Farm Work
             </h1>
 
@@ -147,7 +147,7 @@ export default function OurTeamPage() {
                 <span>WORKING CULTURE</span>
               </div>
 
-              <h2 className="text-xl sm:text-2xl font-semibold text-[#0C1E12] leading-tight">
+              <h2 className="text-lg sm:text-xl font-semibold text-[#0C1E12] leading-tight">
                 Practical Experience &amp; Continuous Learning
               </h2>
 
@@ -206,7 +206,7 @@ export default function OurTeamPage() {
                 <Layers size={10} className="text-[#00A859]" />
                 <span>ORGANIZATION LEDGER</span>
               </div>
-              <h2 className="text-xl sm:text-2xl font-semibold text-[#0C1E12]">
+              <h2 className="text-lg sm:text-xl font-semibold text-[#0C1E12]">
                 Operational Coverage Areas
               </h2>
             </div>
@@ -260,7 +260,7 @@ export default function OurTeamPage() {
                 <User size={10} className="text-[#00A859]" />
                 <span>VERIFIED PROFILES</span>
               </div>
-              <h2 className="text-xl sm:text-2xl font-semibold text-[#0C1E12]">
+              <h2 className="text-lg sm:text-xl font-semibold text-[#0C1E12]">
                 Team Profiles &amp; Leadership
               </h2>
             </div>
@@ -301,7 +301,7 @@ export default function OurTeamPage() {
                 <div className="lg:col-span-8 space-y-4">
                   <div className="border-b border-[#00A859]/10 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <div>
-                      <h3 className="text-lg sm:text-xl font-semibold text-[#0C1E12]">
+                      <h3 className="text-base sm:text-lg font-semibold text-[#0C1E12]">
                         {member.name}
                       </h3>
                       <p className="text-[11px] font-mono text-[#00A859] font-bold uppercase tracking-wider">
@@ -369,7 +369,7 @@ export default function OurTeamPage() {
               <span>Community &amp; Learning Invitation</span>
             </div>
 
-            <h2 className="text-xl sm:text-2xl font-semibold leading-tight text-[#FAF9F6]">
+            <h2 className="text-lg sm:text-xl font-semibold leading-tight text-[#FAF9F6]">
               Learn with Us or Contribute a Practical Skill
             </h2>
 

@@ -1,9 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowUpRight, Compass, Sprout, Droplets, Users, Lightbulb } from 'lucide-react';
+import { ArrowRight, Wheat, Sprout, Droplets, Users, Lightbulb } from 'lucide-react';
+
+const SLIDE_INTERVAL_MS = 3000;
 
 const highlights = [
   {
@@ -44,88 +46,178 @@ const highlights = [
   },
 ];
 
-export default function FarmHighlights() {
+/* Long, thin arrow like the reference (line + open arrowhead) */
+function LongArrow({ direction }: { direction: 'left' | 'right' }) {
   return (
-    <section className="py-20 bg-[#FAF9F6] text-[#0C1E12] border-y border-[#00A859]/20 selection:bg-[#E5B800] selection:text-[#0C1E12]">
-      <div className="max-w-6xl mx-auto px-6 md:px-12 space-y-12">
-        
-        {/* ── 1. Section Header ───────────────────────────────────────────── */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#00A859]/20 pb-6">
-          <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 border border-[#E5B800]/50 bg-[#0C1E12]/5 px-3 py-1 text-xs font-mono uppercase tracking-[0.2em] text-[#00A859]">
-              <Compass size={13} className="text-[#00A859]" />
-              <span>Core Focus Areas</span>
+    <svg
+      width="60"
+      height="16"
+      viewBox="0 0 60 16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      style={{ transform: direction === 'left' ? 'scaleX(-1)' : undefined }}
+    >
+      <path d="M2 9 C 20 7.5, 38 8.5, 57 8" />
+      <path d="M50 2 L 57 8 L 50 14" />
+    </svg>
+  );
+}
+
+export default function FarmHighlights() {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [paused, setPaused] = useState(false);
+
+  const scrollByCard = (dir: 1 | -1) => {
+    const el = trackRef.current;
+    if (!el) return;
+    const card = el.querySelector<HTMLElement>('[data-card]');
+    const amount = (card?.offsetWidth ?? 320) + 24;
+
+    const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 4;
+    const atStart = el.scrollLeft <= 4;
+
+    // Loop around at either end
+    if (dir === 1 && atEnd) {
+      el.scrollTo({ left: 0, behavior: 'smooth' });
+    } else if (dir === -1 && atStart) {
+      el.scrollTo({ left: el.scrollWidth, behavior: 'smooth' });
+    } else {
+      el.scrollBy({ left: dir * amount, behavior: 'smooth' });
+    }
+  };
+
+  // Auto-slide every 3 seconds (pauses on hover/focus/touch, respects reduced motion)
+  useEffect(() => {
+    if (paused) return;
+    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const id = window.setInterval(() => scrollByCard(1), SLIDE_INTERVAL_MS);
+    return () => window.clearInterval(id);
+  }, [paused]);
+
+  return (
+    <section className="border-y border-[#D8D2BE] bg-[#F5F2E8] py-16 text-[#0F3D1E] selection:bg-[#FBC02D] selection:text-[#0F3D1E] lg:py-20">
+      <div className="mx-auto max-w-7xl px-6 sm:px-10 lg:px-16">
+        <div className="grid items-stretch gap-10 lg:grid-cols-[minmax(0,460px)_minmax(0,1fr)] lg:gap-12">
+
+          {/* ── Left: heading column ───────────────────────────────────── */}
+          <div className="flex flex-col">
+            <div className="space-y-4">
+              {/* Label with golden wheat accent */}
+              <div className="flex items-center gap-3">
+                <span className="flex items-center text-[#FBC02D]">
+                  <span className="h-[2px] w-8 bg-[#FBC02D]" />
+                  <Wheat size={22} strokeWidth={2} className="-ml-1" />
+                </span>
+                <span className="text-base font-semibold text-[#1F8A3B]">Core Focus Areas</span>
+              </div>
+
+              <h2
+                className="text-3xl font-extrabold leading-[1.15] text-[#0F3D1E] sm:text-4xl lg:text-[2.6rem]"
+                style={{ fontFamily: 'var(--font-display)' }}
+              >
+                What we are building on the farm
+              </h2>
+
+              <p className="max-w-md text-justify text-sm leading-relaxed text-[#6F7466]">
+                Integrated Farm • Kirehe, Rwanda
+              </p>
+
+              <Link
+                href="/initiatives"
+                className="group inline-flex items-center gap-4 rounded-full bg-[#0F3D1E] py-2 pl-7 pr-2 text-sm font-bold text-white transition-colors hover:bg-[#0B2E16]"
+              >
+                <span>Explore details</span>
+                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#FBC02D] text-[#0F3D1E] transition-transform duration-300 group-hover:translate-x-0.5">
+                  <ArrowRight size={16} strokeWidth={2.5} />
+                </span>
+              </Link>
             </div>
-            <h2 
-              className="text-3xl sm:text-4xl font-normal text-[#0C1E12]"
-              style={{ fontFamily: 'var(--font-display)' }}
-            >
-              What we are building on the farm
-            </h2>
+
+            {/* Prev / next arrows (manual control still available) */}
+            <div className="mt-10 flex items-center justify-start gap-10 text-[#0F3D1E] lg:mt-auto lg:justify-end lg:pt-10">
+              <button
+                type="button"
+                onClick={() => scrollByCard(-1)}
+                aria-label="Previous focus area"
+                className="transition-transform duration-200 hover:-translate-x-1"
+              >
+                <LongArrow direction="left" />
+              </button>
+              <button
+                type="button"
+                onClick={() => scrollByCard(1)}
+                aria-label="Next focus area"
+                className="transition-transform duration-200 hover:translate-x-1"
+              >
+                <LongArrow direction="right" />
+              </button>
+            </div>
           </div>
 
-          <p className="text-xs font-mono text-[#5A6259]">
-            Integrated Farm • Kirehe, Rwanda
-          </p>
-        </div>
-
-        {/* ── 2. Editorial Grid ────────────────────────────────────────────── */}
-        <div className="grid md:grid-cols-2 gap-8">
-          {highlights.map((item, index) => {
-            const IconComponent = item.icon;
-            return (
-              <div 
-                key={index} 
-                className="group border border-[#00A859]/20 bg-white p-6 sm:p-8 shadow-2xs flex flex-col justify-between space-y-6 hover:border-[#00A859] transition-all duration-200"
-              >
-                <div className="space-y-5">
-                  {/* Image Frame with Clean Overlay Tag */}
-                  <div className="relative w-full h-60 overflow-hidden bg-[#0C1E12] border border-[#00A859]/15">
+          {/* ── Right: auto-sliding cards ──────────────────────────────── */}
+          <div
+            ref={trackRef}
+            onMouseEnter={() => setPaused(true)}
+            onMouseLeave={() => setPaused(false)}
+            onFocus={() => setPaused(true)}
+            onBlur={() => setPaused(false)}
+            onTouchStart={() => setPaused(true)}
+            onTouchEnd={() => setPaused(false)}
+            className="flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
+            {highlights.map((item) => {
+              const IconComponent = item.icon;
+              return (
+                <article
+                  key={item.title}
+                  data-card
+                  className="group flex w-[82%] shrink-0 snap-start flex-col overflow-hidden rounded-[22px] bg-[#0F4620] shadow-[0_10px_30px_rgba(15,70,32,0.18)] sm:w-[300px] lg:w-[310px]"
+                >
+                  {/* Image + overlapping yellow icon */}
+                  <div className="relative h-[250px] w-full overflow-hidden bg-[#0C1E12] sm:h-[270px]">
                     <Image
                       src={item.image}
                       alt={item.alt}
                       fill
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                      className="object-cover brightness-95 group-hover:scale-105 transition-transform duration-500"
+                      sizes="(max-width: 640px) 82vw, 310px"
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
-                    <div className="absolute top-3 left-3 bg-[#0C1E12]/85 backdrop-blur-xs border border-white/20 px-2.5 py-1 text-white text-[9px] font-mono uppercase tracking-widest font-bold">
+                    <div className="absolute left-4 top-4 rounded-full bg-[#0C1E12]/80 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white backdrop-blur-sm">
                       {item.tag}
                     </div>
+                    <div className="absolute bottom-7 left-6 flex h-[84px] w-[84px] items-center justify-center rounded-full bg-[#FBC02D] text-[#5B2A06] shadow-md">
+                      <IconComponent size={36} strokeWidth={2} />
+                    </div>
                   </div>
 
-                  {/* Title & Justified Description */}
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-[#00A859]">
-                      <IconComponent size={16} />
-                      <h3 
-                        className="text-xl font-bold text-[#0C1E12]" 
-                        style={{ fontFamily: 'var(--font-display)' }}
-                      >
-                        {item.title}
-                      </h3>
-                    </div>
-
-                    <p className="text-xs text-[#5A6259] leading-relaxed text-justify">
+                  {/* Green body */}
+                  <div className="flex flex-1 flex-col p-7">
+                    <h3
+                      className="mb-3 text-xl font-bold leading-snug text-white"
+                      style={{ fontFamily: 'var(--font-display)' }}
+                    >
+                      {item.title}
+                    </h3>
+                    <p className="mb-5 flex-1 text-justify text-sm leading-relaxed text-white/90">
                       {item.description}
                     </p>
+                    <Link
+                      href={item.link}
+                      className="inline-block self-start border-b-2 border-[#FBC02D] pb-0.5 text-sm font-bold text-white transition-colors hover:text-[#FBC02D]"
+                    >
+                      Explore details
+                    </Link>
                   </div>
-                </div>
-
-                {/* Direct Action Link */}
-                <div className="pt-4 border-t border-[#00A859]/10">
-                  <Link
-                    href={item.link}
-                    className="inline-flex items-center gap-2 border border-[#00A859] bg-[#00A859] text-white px-5 py-2.5 text-xs font-mono font-bold uppercase tracking-wider hover:bg-[#008A47] transition-colors shadow-2xs"
-                  >
-                    <span>Explore details</span>
-                    <ArrowUpRight size={14} />
-                  </Link>
-                </div>
-              </div>
-            );
-          })}
+                </article>
+              );
+            })}
+          </div>
         </div>
-
       </div>
     </section>
   );

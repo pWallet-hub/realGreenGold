@@ -1,16 +1,30 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Poppins } from 'next/font/google';
-import { Compass, ArrowUpRight, Check, ChevronRight } from 'lucide-react';
+import {
+  ArrowUpRight,
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  ChevronRight,
+  Wheat,
+  Sprout,
+  Flower2,
+  Beef,
+  Leaf,
+  Egg,
+  Recycle,
+  type LucideIcon,
+} from 'lucide-react';
 import FounderStory from './FounderStory';
 
 // Load Poppins font with specified weights matching site-wide standards
 const poppins = Poppins({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
+  weight: ['300', '400', '500', '600', '700', '800'],
   variable: '--font-poppins',
   display: 'swap',
 });
@@ -25,6 +39,7 @@ type PlotSystem = {
   image: string;
   acreage: string;
   status: string;
+  icon: LucideIcon;
 };
 
 const plotSystems: PlotSystem[] = [
@@ -38,6 +53,7 @@ const plotSystems: PlotSystem[] = [
     image: '/assets/home.jpg',
     acreage: 'Primary Field',
     status: 'Active Harvesting',
+    icon: Sprout,
   },
   {
     id: 'plot-b',
@@ -49,6 +65,7 @@ const plotSystems: PlotSystem[] = [
     image: '/assets/home.jpg',
     acreage: 'Habitat Zone',
     status: 'Monitored Sanctuary',
+    icon: Flower2,
   },
   {
     id: 'plot-c',
@@ -60,6 +77,7 @@ const plotSystems: PlotSystem[] = [
     image: '/assets/home.jpg',
     acreage: 'Livestock Unit',
     status: 'Zero-Grazing Active',
+    icon: Beef,
   },
   {
     id: 'plot-d',
@@ -71,6 +89,7 @@ const plotSystems: PlotSystem[] = [
     image: '/assets/home.jpg',
     acreage: 'Forage Plot',
     status: 'Managed Unit',
+    icon: Leaf,
   },
   {
     id: 'plot-e',
@@ -82,6 +101,7 @@ const plotSystems: PlotSystem[] = [
     image: '/assets/home.jpg',
     acreage: 'Designated Zones',
     status: 'Rotational Access',
+    icon: Egg,
   },
   {
     id: 'plot-f',
@@ -93,186 +113,306 @@ const plotSystems: PlotSystem[] = [
     image: '/assets/home.jpg',
     acreage: 'Small Livestock',
     status: 'Continuous Cycling',
+    icon: Recycle,
   },
 ];
 
 export default function AboutUsSection() {
-  const [activePlot, setActivePlot] = useState<PlotSystem>(plotSystems[0]);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  const activePlot = plotSystems[activeIndex];
+  const ActiveIcon = activePlot.icon;
+  const total = plotSystems.length;
+  const pad = (n: number) => String(n).padStart(2, '0');
+
+  const goTo = (index: number, focus = false) => {
+    const next = (index + total) % total;
+    setActiveIndex(next);
+    if (focus) tabRefs.current[next]?.focus();
+  };
+
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+      e.preventDefault();
+      goTo(activeIndex + 1, true);
+    } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+      e.preventDefault();
+      goTo(activeIndex - 1, true);
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      goTo(0, true);
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      goTo(total - 1, true);
+    }
+  };
 
   return (
-    <section className={`${poppins.className} bg-[#FAF9F6] text-[#0C1E12] selection:bg-[#E5B800] selection:text-[#0C1E12]`}>
-      
-      {/* ── 1. Executive Introduction ────────────────────────────────────── */}
-      <div className="max-w-6xl mx-auto px-4 md:px-8 py-12 sm:py-16 border-b border-[#00A859]/20">
-        <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-end">
-          <div className="lg:col-span-8 space-y-3">
-            <div className="inline-flex items-center gap-2 border border-[#E5B800]/50 bg-[#0C1E12]/5 px-2.5 py-0.5 text-[9px] font-mono uppercase tracking-[0.15em] text-[#00A859]">
-              <Compass size={11} className="text-[#00A859]" />
-              <span>SPATIAL FIELD LAYOUT • KIREHE DISTRICT</span>
+    <section
+      className={`${poppins.className} bg-[#F5F2E8] text-[#0F3D1E] selection:bg-[#FBC02D] selection:text-[#0F3D1E]`}
+    >
+      <style>{`
+        @keyframes plotIn {
+          from { opacity: 0; transform: translateY(12px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        .plot-in { animation: plotIn 0.45s ease both; }
+        @media (prefers-reduced-motion: reduce) { .plot-in { animation: none; } }
+        .plot-scroll { scrollbar-width: none; }
+        .plot-scroll::-webkit-scrollbar { display: none; }
+      `}</style>
+
+      {/* ═══ 1. Executive introduction ═══════════════════════════════════ */}
+      <div className="mx-auto max-w-7xl px-6 py-14 sm:px-10 lg:px-16 lg:py-20">
+        <div className="grid items-end gap-8 lg:grid-cols-12 lg:gap-14">
+          <div className="space-y-5 lg:col-span-7">
+            <div className="flex items-center gap-3">
+              <span className="flex items-center text-[#FBC02D]">
+                <span className="h-[2px] w-8 bg-[#FBC02D]" />
+                <Wheat size={22} strokeWidth={2} className="-ml-1" />
+              </span>
+              <span className="text-sm font-semibold text-[#1F8A3B] sm:text-base">
+                Spatial Field Layout • Kirehe District
+              </span>
             </div>
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-[#0C1E12] leading-tight tracking-tight">
+
+            <h2 className="text-3xl font-extrabold leading-[1.12] tracking-tight text-[#0A2410] sm:text-4xl lg:text-5xl">
               An integrated farm where crops, livestock, and soil care support one another.
             </h2>
           </div>
 
-          <div className="lg:col-span-4 space-y-3">
-            <p className="text-xs sm:text-sm text-[#3A4239] leading-relaxed text-justify font-normal">
+          <div className="space-y-5 lg:col-span-5">
+            <p className="text-justify text-[0.95rem] leading-relaxed text-[#4E594A]">
               At Real Green Gold Ltd, we produce avocado, banana, and fresh vegetables while building an integrated system where livestock, pollinators, and soil care work in balance.
             </p>
-            <div className="pt-1">
-              <Link
-                href="/initiatives"
-                className="inline-flex items-center gap-1.5 text-xs font-mono font-bold uppercase tracking-wider text-[#00A859] hover:text-[#0C1E12] transition-colors"
-              >
-                <span>Explore Ten Core Initiatives</span>
-                <ArrowUpRight size={13} />
-              </Link>
-            </div>
+
+            <Link
+              href="/initiatives"
+              className="group inline-flex w-fit items-center gap-4 rounded-full bg-[#0F3D1E] py-2 pl-7 pr-2 text-sm font-bold text-white transition-colors hover:bg-[#0B2E16]"
+            >
+              <span>Explore Ten Core Initiatives</span>
+              <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#FBC02D] text-[#0F3D1E] transition-transform duration-300 group-hover:translate-x-0.5">
+                <ArrowUpRight size={16} strokeWidth={2.5} />
+              </span>
+            </Link>
           </div>
         </div>
       </div>
 
-      {/* ── 2. Architectural Interactive Plot Selector ───────────────────── */}
-      <div className="max-w-6xl mx-auto px-4 md:px-8 py-12 sm:py-16 border-b border-[#00A859]/20">
-        
-        <div className="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-[#00A859]/20 pb-3">
-          <div className="space-y-1">
-            <span className="text-[8.5px] font-mono font-bold uppercase tracking-[0.15em] text-[#E5B800] block">
-              FIELD MANAGEMENT
-            </span>
-            <h3 className="text-lg sm:text-xl font-semibold text-[#0C1E12]">
-              What&rsquo;s growing, plot by plot
-            </h3>
-          </div>
-          <span className="text-[10px] text-[#5A6259] font-mono">
-            Select a plot system to inspect field details
-          </span>
-        </div>
+      {/* ═══ 2. Plot selector (green inset panel) ════════════════════════ */}
+      <div className="px-3 pb-14 sm:px-5 lg:px-6 lg:pb-20">
+        <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[28px] bg-[#0F3D1E] p-3 shadow-[0_18px_44px_rgba(15,61,30,0.28)] sm:rounded-[36px] sm:p-4">
+          {/* faint dotted texture */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 opacity-70"
+            style={{
+              backgroundImage: 'radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px)',
+              backgroundSize: '26px 26px',
+            }}
+          />
 
-        <div className="grid lg:grid-cols-12 gap-6 items-stretch">
-          
-          {/* Left Column: Interactive Plot Selection List */}
-          <div className="lg:col-span-5 space-y-2">
-            {plotSystems.map((plot) => {
-              const isSelected = activePlot.id === plot.id;
-              return (
-                <button
-                  key={plot.id}
-                  type="button"
-                  onClick={() => setActivePlot(plot)}
-                  className={`w-full text-left p-3.5 sm:p-4 border transition-all duration-200 flex items-center justify-between cursor-pointer ${
-                    isSelected
-                      ? 'border-[#0C1E12] bg-[#0C1E12] text-[#FAF9F6] shadow-2xs'
-                      : 'border-[#00A859]/20 bg-white text-[#0C1E12] hover:border-[#00A859] hover:bg-[#FAF9F6]'
-                  }`}
-                >
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
+          {/* dashed inner frame */}
+          <div className="relative rounded-[22px] border border-dashed border-white/25 px-5 py-10 text-white sm:rounded-[28px] sm:px-10 lg:px-12 lg:py-12">
+
+            {/* Panel header */}
+            <div className="mb-10 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <span className="flex items-center text-[#FBC02D]">
+                    <span className="h-[2px] w-8 bg-[#FBC02D]" />
+                    <Wheat size={22} strokeWidth={2} className="-ml-1" />
+                  </span>
+                  <span className="text-sm font-semibold text-[#FBC02D] sm:text-base">Field Management</span>
+                </div>
+                <h3 className="text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">
+                  What&rsquo;s growing, plot by plot
+                </h3>
+                <p className="text-sm text-white/75">Select a plot system to inspect field details</p>
+              </div>
+
+              {/* Counter + prev/next */}
+              <div className="flex items-center gap-4">
+                <p className="text-sm font-bold tabular-nums text-white/80">
+                  <span className="text-2xl text-[#FBC02D]">{pad(activeIndex + 1)}</span> / {pad(total)}
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => goTo(activeIndex - 1)}
+                    aria-label="Previous plot system"
+                    className="flex h-11 w-11 items-center justify-center rounded-full border border-white/40 text-white transition-colors hover:border-[#FBC02D] hover:bg-[#FBC02D] hover:text-[#0F3D1E]"
+                  >
+                    <ArrowLeft size={18} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => goTo(activeIndex + 1)}
+                    aria-label="Next plot system"
+                    className="flex h-11 w-11 items-center justify-center rounded-full border border-white/40 text-white transition-colors hover:border-[#FBC02D] hover:bg-[#FBC02D] hover:text-[#0F3D1E]"
+                  >
+                    <ArrowRight size={18} />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid items-start gap-6 lg:grid-cols-12 lg:gap-8">
+
+              {/* ── Left: plot list ─────────────────────────────────── */}
+              <div
+                role="tablist"
+                aria-label="Plot systems"
+                aria-orientation="vertical"
+                onKeyDown={onKeyDown}
+                className="plot-scroll -mx-1 flex snap-x gap-3 overflow-x-auto px-1 pb-2 lg:col-span-5 lg:mx-0 lg:flex-col lg:overflow-visible lg:px-0 lg:pb-0"
+              >
+                {plotSystems.map((plot, i) => {
+                  const isSelected = i === activeIndex;
+                  const Icon = plot.icon;
+                  return (
+                    <button
+                      key={plot.id}
+                      ref={(el) => {
+                        tabRefs.current[i] = el;
+                      }}
+                      id={`tab-${plot.id}`}
+                      role="tab"
+                      type="button"
+                      aria-selected={isSelected}
+                      aria-controls="plot-panel"
+                      tabIndex={isSelected ? 0 : -1}
+                      onClick={() => setActiveIndex(i)}
+                      className={`group flex w-[270px] shrink-0 snap-start items-center gap-4 rounded-2xl p-4 text-left transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white lg:w-full ${
+                        isSelected
+                          ? 'bg-[#FBC02D] text-[#0F3D1E] shadow-lg'
+                          : 'bg-white/[0.07] text-white hover:bg-white/[0.14]'
+                      }`}
+                    >
                       <span
-                        className={`text-[9px] font-mono font-bold tracking-widest px-2 py-0.5 border ${
-                          isSelected
-                            ? 'border-[#E5B800] text-[#E5B800] bg-white/5'
-                            : 'border-[#00A859]/30 text-[#00A859] bg-[#FAF9F6]'
+                        className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full transition-colors duration-300 ${
+                          isSelected ? 'bg-[#0F3D1E] text-[#FBC02D]' : 'bg-[#FBC02D] text-[#5B2A06]'
                         }`}
                       >
-                        {plot.code}
+                        <Icon size={22} strokeWidth={2} />
                       </span>
-                      <span
-                        className={`text-[9px] font-mono uppercase tracking-wider ${
-                          isSelected ? 'text-[#FAF9F6]/70' : 'text-[#5A6259]'
+
+                      <span className="min-w-0 flex-1">
+                        <span
+                          className={`block text-[11px] font-bold uppercase tracking-[0.14em] ${
+                            isSelected ? 'text-[#0F3D1E]/70' : 'text-[#FBC02D]'
+                          }`}
+                        >
+                          {plot.code} • {plot.category}
+                        </span>
+                        <span className="mt-0.5 block text-sm font-bold leading-snug sm:text-[0.95rem]">
+                          {plot.title}
+                        </span>
+                      </span>
+
+                      <ChevronRight
+                        size={18}
+                        className={`shrink-0 transition-transform duration-300 ${
+                          isSelected ? 'translate-x-1 text-[#0F3D1E]' : 'text-white/50 group-hover:translate-x-1'
                         }`}
-                      >
-                        {plot.category}
+                      />
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* ── Right: active plot showcase ─────────────────────── */}
+              <div
+                id="plot-panel"
+                role="tabpanel"
+                aria-labelledby={`tab-${activePlot.id}`}
+                className="lg:col-span-7"
+              >
+                <article
+                  key={activePlot.id}
+                  className="plot-in rounded-[22px] bg-white p-4 text-[#0F3D1E] shadow-[0_14px_36px_rgba(0,0,0,0.22)] sm:p-5"
+                >
+                  {/* Image with overlapping icon */}
+                  <div className="relative">
+                    <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-[#0C1E12]">
+                      <Image
+                        src={activePlot.image}
+                        alt={activePlot.title}
+                        fill
+                        sizes="(max-width: 1024px) 100vw, 55vw"
+                        className="object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#0A2410]/45 via-transparent to-transparent" />
+                      <span className="absolute left-3 top-3 rounded-full bg-[#0C1E12]/80 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white backdrop-blur-sm">
+                        {activePlot.acreage}
+                      </span>
+                      <span className="absolute bottom-3 right-3 rounded-full bg-[#FBC02D] px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-[#0F3D1E]">
+                        {activePlot.status}
                       </span>
                     </div>
-                    <h4 className={`text-xs sm:text-sm font-semibold ${
-                      isSelected ? 'text-[#FAF9F6]' : 'text-[#0C1E12]'
-                    }`}>
-                      {plot.title}
-                    </h4>
+
+                    <span className="absolute -bottom-7 left-6 flex h-[68px] w-[68px] items-center justify-center rounded-full border-4 border-white bg-[#FBC02D] text-[#5B2A06] shadow-md">
+                      <ActiveIcon size={28} strokeWidth={2} />
+                    </span>
                   </div>
 
-                  <ChevronRight
-                    size={15}
-                    className={`transition-transform shrink-0 ml-2 ${
-                      isSelected ? 'text-[#E5B800] translate-x-1' : 'text-[#5A6259]'
-                    }`}
-                  />
-                </button>
-              );
-            })}
-          </div>
+                  {/* Title & narrative */}
+                  <div className="space-y-3 px-1 pt-11">
+                    <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#8B7134]">
+                      {activePlot.code} • {activePlot.category}
+                    </p>
+                    <h4 className="text-xl font-extrabold leading-snug text-[#0A2410] sm:text-2xl">
+                      {activePlot.title}
+                    </h4>
+                    <p className="text-justify text-sm leading-relaxed text-[#4E594A] sm:text-[0.95rem]">
+                      {activePlot.summary}
+                    </p>
+                  </div>
 
-          {/* Right Column: Active Plot Showcase */}
-          <div className="lg:col-span-7 border border-[#00A859]/20 bg-white p-5 sm:p-6 flex flex-col justify-between shadow-2xs space-y-6">
-            <div className="space-y-4">
-              
-              {/* Image Frame */}
-              <div className="relative h-56 sm:h-64 w-full border border-[#00A859]/20 bg-[#0C1E12] overflow-hidden">
-                <Image
-                  src={activePlot.image}
-                  alt={activePlot.title}
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="object-cover brightness-95"
-                  priority
-                />
-                <div className="absolute top-2 left-2 bg-[#0C1E12]/90 border border-white/20 px-2 py-0.5 text-[#FAF9F6] text-[8px] font-mono uppercase tracking-widest font-bold">
-                  {activePlot.acreage}
-                </div>
-                <div className="absolute bottom-2 right-2 bg-[#E5B800] text-[#0C1E12] px-2 py-0.5 text-[8px] font-mono uppercase tracking-widest font-bold">
-                  {activePlot.status}
-                </div>
-              </div>
-
-              {/* Title & Narrative */}
-              <div className="space-y-1.5">
-                <div className="flex items-center gap-2 text-[9px] font-mono font-bold uppercase tracking-wider text-[#00A859]">
-                  <span>{activePlot.code}</span>
-                  <span>•</span>
-                  <span>{activePlot.category}</span>
-                </div>
-                <h3 className="text-lg sm:text-xl font-semibold text-[#0C1E12]">
-                  {activePlot.title}
-                </h3>
-                <p className="text-xs text-[#3A4239] leading-relaxed text-justify font-normal">
-                  {activePlot.summary}
-                </p>
-              </div>
-
-              {/* Integration Features */}
-              <div className="space-y-2 pt-2 border-t border-[#00A859]/15">
-                <span className="text-[8.5px] font-mono font-bold uppercase tracking-wider text-[#0C1E12] block">
-                  KEY SYSTEM INTEGRATIONS
-                </span>
-                <div className="grid sm:grid-cols-3 gap-2">
-                  {activePlot.highlights.map((point, idx) => (
-                    <div key={idx} className="border border-[#00A859]/20 bg-[#FAF9F6] p-2 text-[10.5px] text-[#3A4239] font-normal flex items-center gap-1.5 leading-tight">
-                      <Check size={12} className="text-[#00A859] shrink-0" />
-                      <span>{point}</span>
+                  {/* Key integrations */}
+                  <div className="mt-5 border-t border-dashed border-[#D8D2BE] px-1 pt-5">
+                    <p className="mb-3 text-[11px] font-bold uppercase tracking-[0.16em] text-[#0F3D1E]">
+                      Key System Integrations
+                    </p>
+                    <div className="grid gap-2.5 sm:grid-cols-3">
+                      {activePlot.highlights.map((point) => (
+                        <div
+                          key={point}
+                          className="flex items-start gap-2.5 rounded-xl bg-[#F5F2E8] p-3 text-xs font-medium leading-snug text-[#3A4239]"
+                        >
+                          <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#1F8A3B] text-white">
+                            <Check size={12} strokeWidth={3} />
+                          </span>
+                          <span>{point}</span>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </div>
+
+                  {/* Footer row */}
+                  <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-dashed border-[#D8D2BE] px-1 pt-4 text-sm">
+                    <span className="font-semibold text-[#1F8A3B]">Real Green Gold Ltd • Kirehe Farm</span>
+                    <Link
+                      href="/initiatives"
+                      className="group inline-flex items-center gap-2 font-bold text-[#0F3D1E] transition-colors hover:text-[#1F8A3B]"
+                    >
+                      <span className="border-b-2 border-[#FBC02D] pb-0.5">View All Initiatives</span>
+                      <ArrowUpRight
+                        size={15}
+                        className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                      />
+                    </Link>
+                  </div>
+                </article>
               </div>
-
-            </div>
-
-            <div className="pt-4 border-t border-[#00A859]/15 flex items-center justify-between text-[10px] font-mono font-bold text-[#00A859]">
-              <span>Real Green Gold Ltd • Kirehe Farm</span>
-              <Link href="/initiatives" className="hover:text-[#0C1E12] inline-flex items-center gap-1">
-                <span>View All Initiatives</span>
-                <ArrowUpRight size={12} />
-              </Link>
             </div>
           </div>
-
         </div>
-
       </div>
 
       {/* Integrated Founder Story Component */}
       <FounderStory />
-
     </section>
   );
 }

@@ -1,26 +1,27 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Poppins } from 'next/font/google';
-import { 
-  Compass, 
-  ArrowUpRight, 
-  Calendar, 
-  Copy, 
-  Check, 
-  Camera, 
-  Filter, 
-  Quote, 
-  ChevronDown, 
-  Sprout, 
-  Droplets, 
-  Users, 
-  Layers, 
-  BookOpen, 
+import {
+  Compass,
+  ArrowUpRight,
+  Calendar,
+  Check,
+  Camera,
+  Filter,
+  Quote,
+  ChevronDown,
+  Sprout,
+  Droplets,
+  Users,
+  Layers,
+  BookOpen,
   CheckCircle2,
-  MapPin
+  MapPin,
+  Wheat,
+  ChevronRight,
 } from 'lucide-react';
 import NavBar from '../components/NavBar';
 import Footer from '../components/Footer';
@@ -29,10 +30,39 @@ import ContactStrip from '../components/ContactStrip';
 // Load Poppins font with specified weights
 const poppins = Poppins({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
+  weight: ['300', '400', '500', '600', '700', '800'],
   variable: '--font-poppins',
   display: 'swap',
 });
+
+/* Tall grass blades + reed stalks along the bottom of the hero.
+   The tile repeats horizontally; its fill matches the page background (#FAF9F6). */
+const GRASS = (() => {
+  const h = 60;
+  const base = 50;
+  const bladeW = 7;
+  const tips = [
+    22, 34, 12, 30, 18, 38, 10, 32, 20, 36, 14, 28, 24, 38, 8, 30, 18, 34,
+    12, 32, 22, 36, 16, 28, 20, 34, 10, 30, 24, 38, 14, 32, 18, 36, 12, 28,
+  ];
+  const w = tips.length * bladeW;
+  let d = `M0 ${h} V${base}`;
+  tips.forEach((tip, i) => {
+    const x = i * bladeW;
+    d += ` L${x + bladeW / 2} ${tip} L${x + bladeW} ${base}`;
+  });
+  d += ` V${h} Z`;
+  const stalks: [number, number][] = [[46, 6], [120, 2], [180, 8], [232, 4]];
+  const reeds = stalks
+    .map(
+      ([x, top]) =>
+        `<rect x='${x}' y='${top + 8}' width='1.8' height='${base - top - 8}' fill='#FAF9F6'/>` +
+        `<ellipse cx='${x + 0.9}' cy='${top + 8}' rx='3' ry='8' fill='#FAF9F6'/>`
+    )
+    .join('');
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 ${w} ${h}'><path fill='#FAF9F6' d='${d}'/>${reeds}</svg>`;
+  return { image: `url("data:image/svg+xml,${encodeURIComponent(svg)}")`, width: w, height: h };
+})();
 
 // ── 1. Accordion Data for Founder Leadership Essay ──────────────────────────
 const essaySections = [
@@ -163,6 +193,71 @@ const galleryAlbums = [
   },
 ];
 
+/* Fades + slides content in when it scrolls into view */
+function Reveal({
+  children,
+  className = '',
+  delay = 0,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  delay?: number;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [shown, setShown] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (typeof IntersectionObserver === 'undefined') {
+      setShown(true);
+      return;
+    }
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShown(true);
+          io.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      style={{ transitionDelay: `${delay}ms` }}
+      className={`transition-all duration-700 ease-out motion-reduce:transition-none ${
+        shown
+          ? 'translate-y-0 opacity-100'
+          : 'translate-y-6 opacity-0 motion-reduce:translate-y-0 motion-reduce:opacity-100'
+      } ${className}`}
+    >
+      {children}
+    </div>
+  );
+}
+
+/* Handwritten eyebrow with the yellow wheat divider */
+function Eyebrow({ children, light = false }: { children: React.ReactNode; light?: boolean }) {
+  return (
+    <p
+      className={`font-[cursive] flex items-center gap-3 text-2xl font-semibold sm:text-[1.7rem] ${
+        light ? 'text-[#FBC02D]' : 'text-[#1E8A3C]'
+      }`}
+    >
+      <span className="flex items-center text-[#F9C22E]">
+        <span className="h-[2px] w-7 rounded-full bg-[#F9C22E]" />
+        <Wheat size={22} strokeWidth={2} className="-ml-0.5" />
+      </span>
+      {children}
+    </p>
+  );
+}
+
 export default function BlogsPage() {
   const [activeCategory, setActiveCategory] = useState('All');
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -186,61 +281,118 @@ export default function BlogsPage() {
 
   return (
     <div className={`${poppins.className} min-h-screen flex flex-col bg-[#FAF9F6] text-[#0C1E12] selection:bg-[#E5B800] selection:text-[#0C1E12]`}>
+      <style>{`
+        @keyframes rgg-rise { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
+        .rgg-rise { opacity: 0; animation: rgg-rise 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+        @media (prefers-reduced-motion: reduce) {
+          .rgg-rise { opacity: 1; animation: none; }
+        }
+      `}</style>
+
       <NavBar />
 
-      <main className="flex-grow space-y-12">
-        
-        {/* ── 1. Expanded Hero Header Section ───────────────────────────── */}
-        <section className="relative h-[55vh] min-h-[480px] flex items-center justify-center overflow-hidden border-b border-[#00A859]/30 bg-[#0C1E12]">
-          <Image
-    src="/assets/home.jpg"
-    alt="Real Green Gold Ltd farm journal and gallery archives in Kirehe, Rwanda"
-    fill
-    priority
-    quality={95}
-    sizes="100vw"
-    className="object-cover object-center brightness-60 contrast-[1.05] scale-105 transition-transform duration-1000"
-  />
+      <main className="flex-grow space-y-8">
 
-  {/* Transparent Gradient Overlays */}
-  <div className="absolute inset-0 bg-gradient-to-r from-[#0C1E12]/80 via-[#0C1E12]/50 to-transparent z-10" />
-  <div className="absolute inset-0 bg-gradient-to-t from-[#0C1E12]/90 via-transparent to-black/30 z-10" />
+        {/* ── 1. Hero Header Section (same format as the Initiatives hero) ── */}
+        <section className="px-3 pt-3 sm:px-6 sm:pt-4">
+          <div className="relative flex items-end overflow-hidden rounded-[2rem] bg-[#0C1E12] sm:rounded-[2.75rem]">
+            {/* Background image */}
+            <Image
+              src="/assets/home.jpg"
+              alt="Real Green Gold Ltd farm journal and gallery archives in Kirehe, Rwanda"
+              fill
+              priority
+              quality={95}
+              sizes="100vw"
+              className="object-cover object-center brightness-60 contrast-[1.05] scale-105 transition-transform duration-1000"
+            />
 
-          <div className="relative z-10 max-w-4xl mx-auto px-6 text-center space-y-6 pt-12">
-            <div className="inline-flex items-center gap-2 border border-[#E5B800]/60 bg-[#0C1E12]/80 backdrop-blur-md px-3.5 py-1 text-xs font-mono uppercase tracking-[0.2em] text-[#E5B800]">
-              <Compass size={13} className="text-[#00A859]" />
-              <span>Farm Journal &amp; Documented Archives</span>
+            {/* Gradient overlays */}
+            <div className="absolute inset-0 z-10 bg-gradient-to-r from-[#0C1E12]/75 via-[#0C1E12]/35 to-transparent" />
+            <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#0C1E12]/60 via-transparent to-black/25" />
+
+            {/* Content — pt-24 clears the fixed NavBar */}
+            <div className="relative z-20 mx-auto w-full max-w-7xl px-6 pb-14 pt-24 sm:px-12 lg:px-20">
+              <div className="max-w-4xl space-y-4">
+                {/* Eyebrow */}
+                <p
+                  className="rgg-rise flex items-center gap-3 text-base font-semibold text-[#E5B800] sm:text-lg"
+                  style={{ animationDelay: '0ms' }}
+                >
+                  <Compass size={22} strokeWidth={1.8} className="shrink-0" />
+                  Farm Journal &amp; Documented Archives
+                </p>
+
+                {/* Headline */}
+                <h1
+                  className="rgg-rise text-5xl font-medium leading-[1.08] tracking-tight text-[#FAF9F6] drop-shadow-sm sm:text-5xl lg:text-6xl"
+                  style={{ fontFamily: 'var(--font-display, Georgia, serif)', animationDelay: '100ms' }}
+                >
+                  Stories and <span className="italic text-[#A5D88F]">Moments</span> from the Farm
+                </h1>
+
+                {/* Accent underline */}
+                <div className="rgg-rise h-1 w-24 rounded-full bg-[#E5B800]" style={{ animationDelay: '200ms' }} />
+
+                {/* Lead paragraph */}
+                <p
+                  className="rgg-rise max-w-3xl text-justify text-base font-normal leading-relaxed text-[#FAF9F6]/90 sm:text-lg"
+                  style={{ animationDelay: '300ms' }}
+                >
+                  Follow the work, people, and ideas shaping Real Green Gold Ltd. Our stories document everyday farming, practical learning, and community engagement.
+                </p>
+
+                {/* Actions */}
+                <div className="rgg-rise flex flex-wrap items-center gap-3 pt-1" style={{ animationDelay: '400ms' }}>
+                  <Link
+                    href="/gallery"
+                    className="inline-flex items-center gap-3 rounded-full bg-[#E5B800] px-7 py-3 text-base font-semibold text-[#0C1E12] shadow-md transition-colors hover:bg-[#F2C94C]"
+                  >
+                    View All Albums <ArrowUpRight size={18} />
+                  </Link>
+                  <Link
+                    href="/initiatives#partnership"
+                    className="inline-flex items-center gap-3 rounded-full border border-white/50 bg-white/10 px-7 py-3 text-base font-semibold text-white backdrop-blur-md transition-colors hover:bg-white hover:text-[#0C1E12]"
+                  >
+                    Discuss a Collaboration <ArrowUpRight size={18} />
+                  </Link>
+                </div>
+              </div>
             </div>
 
-            <h1 className="text-3xl sm:text-5xl md:text-6xl font-semibold leading-[1.1] text-[#FAF9F6] tracking-tight">
-              Stories and Moments from the Farm
-            </h1>
-
-            <div className="w-16 h-0.5 bg-[#E5B800] mx-auto" />
-
-            <p className="max-w-2xl mx-auto text-xs sm:text-sm font-normal text-[#FAF9F6]/85 leading-relaxed text-justify">
-              Follow the work, people, and ideas shaping Real Green Gold Ltd. Our stories document everyday farming, practical learning, and community engagement.
-            </p>
+            {/* Grass + reed stalks along the bottom edge */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -bottom-px left-0 right-0 z-30"
+              style={{
+                height: GRASS.height,
+                backgroundImage: GRASS.image,
+                backgroundRepeat: 'repeat-x',
+                backgroundSize: `${GRASS.width}px ${GRASS.height}px`,
+                backgroundPosition: 'left bottom',
+              }}
+            />
           </div>
         </section>
 
         {/* ── 2. Topic Filter Bar ───────────────────────────────────────── */}
-        <section className="max-w-6xl mx-auto px-4 md:px-8">
-          <div className="border border-[#00A859]/20 bg-white p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
-            <div className="flex items-center gap-1.5 text-[11px] font-mono font-bold uppercase tracking-wider text-[#00A859]">
-              <Filter size={13} />
+        <section className="mx-auto max-w-7xl px-4 md:px-8">
+          <div className="flex flex-col justify-between gap-3 rounded-[1.5rem] border border-[#0F3D1E]/10 bg-white p-3 shadow-sm sm:flex-row sm:items-center sm:pl-5">
+            <div className="flex shrink-0 items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#00A859]">
+              <Filter size={14} />
               <span>Topic Filter:</span>
             </div>
 
-            <div className="flex flex-wrap items-center gap-1">
+            <div className="flex flex-wrap items-center gap-2">
               {categories.map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
-                  className={`px-2.5 py-1 text-[10px] font-mono transition-all cursor-pointer ${
+                  aria-pressed={activeCategory === cat}
+                  className={`cursor-pointer rounded-full px-4 py-1.5 text-xs font-semibold transition-all ${
                     activeCategory === cat
-                      ? 'bg-[#0C1E12] text-[#FAF9F6] border border-[#0C1E12] font-bold'
-                      : 'bg-[#FAF9F6] text-[#5A6259] border border-[#00A859]/15 hover:border-[#00A859] hover:text-[#0C1E12]'
+                      ? 'border border-[#0F3D1E] bg-[#0F3D1E] text-[#FBC02D] shadow-md'
+                      : 'border border-[#0F3D1E]/10 bg-[#FAF9F6] text-[#5A6259] hover:border-[#00A859] hover:text-[#0F3D1E]'
                   }`}
                 >
                   {cat}
@@ -251,289 +403,329 @@ export default function BlogsPage() {
         </section>
 
         {/* ── 3. Founder Leadership Essay Section ───────────────────────── */}
-        <section className="max-w-6xl mx-auto px-4 md:px-8 space-y-6">
-          
+        <section className="mx-auto max-w-7xl space-y-6 px-4 md:px-8">
+
           {/* Header Block */}
-          <div className="border-b border-[#00A859]/20 pb-3 flex flex-col sm:flex-row sm:items-end justify-between gap-3">
-            <div className="space-y-1">
-              <div className="inline-flex items-center gap-1.5 border border-[#E5B800]/50 bg-[#0C1E12]/5 px-2 py-0.5 text-[9px] font-mono uppercase tracking-[0.15em] text-[#00A859]">
-                <Compass size={10} className="text-[#00A859]" />
-                <span>FOUNDER LEADERSHIP ESSAY</span>
-              </div>
-              <h2 className="text-xl sm:text-2xl font-semibold text-[#0C1E12] leading-tight">
+          <Reveal className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+            <div className="space-y-3">
+              <Eyebrow>Founder Leadership Essay</Eyebrow>
+              <h2 className="max-w-3xl text-3xl font-extrabold leading-[1.1] tracking-tight text-[#0F3D1E] sm:text-4xl lg:text-[2.6rem]">
                 How Real Green Gold shaped my entrepreneurship
               </h2>
             </div>
 
-            <div className="sm:text-right flex sm:block items-center justify-between gap-2">
-              <p className="text-[10px] font-mono text-[#00A859] uppercase tracking-wider font-bold">
-                Pacifique Nshimiyimana
-              </p>
-              <p className="text-[9px] font-mono text-[#5A6259] flex items-center sm:justify-end gap-1">
-                <MapPin size={9} className="text-[#00A859]" /> Founder &amp; CEO • Kirehe, Rwanda
+            <div className="shrink-0 sm:text-right">
+              <p className="text-base font-bold text-[#0F3D1E]">Pacifique Nshimiyimana</p>
+              <p className="mt-0.5 flex items-center gap-1.5 text-sm text-[#5A6259] sm:justify-end">
+                <MapPin size={14} className="text-[#00A859]" /> Founder &amp; CEO • Kirehe, Rwanda
               </p>
             </div>
-          </div>
+          </Reveal>
 
           {/* Pull-Quote Banner */}
-          <div className="relative border border-[#00A859]/30 bg-[#0C1E12] text-[#FAF9F6] p-4 sm:p-5 shadow-2xs overflow-hidden">
-            <div className="relative z-10 flex items-start gap-3">
-              <div className="p-1.5 border border-[#E5B800]/50 bg-white/5 text-[#E5B800] shrink-0 mt-0.5">
-                <Quote size={14} />
+          <Reveal delay={80}>
+            <div className="relative overflow-hidden rounded-[2rem] bg-[#0F4620] p-6 text-white shadow-lg sm:p-8">
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-3 rounded-[1.5rem] border border-dashed border-white/20"
+              />
+              <div className="relative flex items-start gap-4 sm:gap-5">
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#FBC02D] text-[#4A2408]">
+                  <Quote size={20} />
+                </span>
+                <blockquote className="text-base font-normal italic leading-relaxed text-white sm:text-lg">
+                  &ldquo;Real Green Gold Ltd began my entrepreneurial journey. The work of building an integrated farm in Kirehe continues to shape how I understand opportunity, responsibility, and leadership.&rdquo;
+                </blockquote>
               </div>
-
-              <blockquote className="text-sm sm:text-base font-normal italic leading-relaxed text-[#FAF9F6] border-l-2 border-[#E5B800] pl-3 text-justify">
-                &ldquo;Real Green Gold Ltd began my entrepreneurial journey. The work of building an integrated farm in Kirehe continues to shape how I understand opportunity, responsibility, and leadership.&rdquo;
-              </blockquote>
             </div>
-          </div>
+          </Reveal>
 
-          {/* Accordion & Sidebar Grid */}
-          <div className="grid lg:grid-cols-12 gap-5 items-start">
-            
+          {/* Sidebar + Accordion Grid */}
+          <div className="grid items-start gap-6 lg:grid-cols-12">
+
             {/* Left Column: Image & Reflection Card */}
-            <div className="lg:col-span-4 space-y-3 lg:sticky lg:top-20">
-              <div className="relative aspect-square w-full overflow-hidden border border-[#00A859]/20 bg-[#0C1E12]">
+            <Reveal className="space-y-4 lg:sticky lg:top-24 lg:col-span-4">
+              <div className="group relative aspect-square w-full overflow-hidden rounded-[2rem] bg-[#0C1E12] shadow-lg">
                 <Image
                   src="/assets/home.jpg"
                   alt="Real Green Gold Ltd integrated farm landscape in Kirehe, Rwanda"
                   fill
                   priority
-                  className="object-cover brightness-95"
+                  sizes="(min-width: 1024px) 30vw, 100vw"
+                  className="object-cover brightness-95 transition-transform duration-700 group-hover:scale-105"
                 />
-                <div className="absolute top-2 left-2 bg-[#0C1E12] border border-white/20 px-2 py-0.5 text-[#E5B800] text-[8px] font-mono font-bold uppercase tracking-wider">
-                  FIELD LEADERSHIP
-                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
+                <span className="absolute bottom-4 left-4 rounded-full bg-white/90 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-[#0F3D1E]">
+                  Field Leadership
+                </span>
               </div>
 
-              <div className="border border-[#00A859]/20 bg-white p-3 space-y-1.5 shadow-2xs">
-                <span className="text-[8.5px] font-mono font-bold uppercase tracking-[0.15em] text-[#E5B800] block">
-                  DOCUMENTED REFLECTION
-                </span>
-                <p className="text-[10px] font-mono text-[#5A6259] leading-relaxed text-justify">
+              {/* Yellow reflection card */}
+              <div className="relative overflow-hidden rounded-[1.75rem] bg-[#F9C22E] p-6 text-[#3B1F06] shadow-lg">
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-2.5 rounded-[1.3rem] border border-dashed border-[#3B1F06]/25"
+                />
+                <div className="relative flex items-center justify-between gap-3">
+                  <p className="text-base font-semibold">Documented Reflection</p>
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#4A2408] text-[#FBC02D]">
+                    <BookOpen size={20} />
+                  </span>
+                </div>
+                <p className="relative mt-3 text-sm leading-relaxed">
                   This memorandum outlines the foundational experiences, farm connections, and community leadership principles that continue to guide Real Green Gold Ltd.
                 </p>
               </div>
 
+              {/* Pill button */}
               <Link
                 href="/initiatives#partnership"
-                className="w-full inline-flex items-center justify-center gap-1.5 border border-[#00A859] bg-[#00A859] text-white py-2 px-3 text-[9.5px] font-mono font-bold uppercase tracking-wider hover:bg-[#008A47] transition-colors shadow-2xs"
+                className="group flex items-center justify-between gap-4 rounded-full bg-[#0F3D1E] py-2 pl-7 pr-2 text-sm font-semibold text-white shadow-md transition-colors hover:bg-[#0B3017]"
               >
                 <span>Discuss a Collaboration</span>
-                <ArrowUpRight size={11} />
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#FBC02D] text-[#0F3D1E] transition-transform duration-300 group-hover:translate-x-1">
+                  <ChevronRight size={20} strokeWidth={2.5} />
+                </span>
               </Link>
-            </div>
+            </Reveal>
 
-            {/* Right Column: Interactive Accordion Cards */}
-            <div className="lg:col-span-8 space-y-2.5">
-              {essaySections.map((pillar) => {
+            {/* Right Column: Accordion */}
+            <div className="space-y-3 lg:col-span-8">
+              {essaySections.map((pillar, i) => {
                 const IconComponent = pillar.icon;
                 const isOpen = openSection === pillar.id;
 
                 return (
-                  <div 
-                    key={pillar.id}
-                    className={`border transition-all duration-200 bg-white shadow-2xs ${
-                      isOpen ? 'border-[#00A859] ring-1 ring-[#00A859]/20' : 'border-[#00A859]/20 hover:border-[#00A859]/60'
-                    }`}
-                  >
-                    <button
-                      onClick={() => toggleSection(pillar.id)}
-                      className="w-full text-left p-3.5 sm:p-4 flex items-start justify-between gap-3 cursor-pointer"
+                  <Reveal key={pillar.id} delay={i * 60}>
+                    <div
+                      className={`overflow-hidden rounded-[1.5rem] border bg-white transition-all duration-300 ${
+                        isOpen
+                          ? 'border-[#00A859] shadow-lg'
+                          : 'border-[#0F3D1E]/10 shadow-sm hover:border-[#00A859]/50 hover:shadow-md'
+                      }`}
                     >
-                      <div className="flex items-start gap-2.5">
-                        <span className="text-[9px] font-mono font-bold text-[#E5B800] bg-[#0C1E12] px-1.5 py-0.5 shrink-0 mt-0.5">
-                          {pillar.number}
-                        </span>
-
-                        <div className="space-y-0.5">
-                          <span className="text-[8px] font-mono font-bold uppercase tracking-[0.15em] text-[#00A859] block">
-                            {pillar.subtitle}
+                      <button
+                        onClick={() => toggleSection(pillar.id)}
+                        aria-expanded={isOpen}
+                        aria-controls={`${pillar.id}-panel`}
+                        className="flex w-full cursor-pointer items-start justify-between gap-4 p-5 text-left"
+                      >
+                        <div className="flex items-start gap-4">
+                          <span
+                            className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-sm font-bold transition-colors duration-300 ${
+                              isOpen ? 'bg-[#0F3D1E] text-[#FBC02D]' : 'bg-[#FBC02D] text-[#0F3D1E]'
+                            }`}
+                          >
+                            {pillar.number}
                           </span>
-                          <h3 className="text-sm sm:text-base font-medium text-[#0C1E12]">
-                            {pillar.title}
-                          </h3>
+
+                          <div>
+                            <span className="block text-[11px] font-bold uppercase tracking-[0.16em] text-[#00A859]">
+                              {pillar.subtitle}
+                            </span>
+                            <h3 className="mt-1 text-lg font-bold leading-snug text-[#0F3D1E]">{pillar.title}</h3>
+                          </div>
                         </div>
-                      </div>
 
-                      <div className="flex items-center gap-1.5 shrink-0">
-                        <IconComponent size={14} className="text-[#00A859] hidden sm:block" />
-                        <ChevronDown 
-                          size={14} 
-                          className={`text-[#0C1E12] transition-transform duration-300 ${
-                            isOpen ? 'rotate-180' : ''
-                          }`} 
-                        />
-                      </div>
-                    </button>
+                        <div className="flex shrink-0 items-center gap-3">
+                          <span className="hidden h-9 w-9 items-center justify-center rounded-full bg-[#0F3D1E]/5 text-[#0F3D1E] sm:flex">
+                            <IconComponent size={17} />
+                          </span>
+                          <ChevronDown
+                            size={20}
+                            className={`text-[#0F3D1E] transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
+                          />
+                        </div>
+                      </button>
 
-                    {!isOpen && (
-                      <div className="px-3.5 sm:px-4 pb-3 pt-0 border-t border-[#00A859]/10">
-                        <p className="text-[10px] font-mono text-[#5A6259] text-justify pt-1">
-                          → {pillar.summary}
+                      {/* Summary (shown while closed) */}
+                      {!isOpen && (
+                        <p className="px-5 pb-5 text-sm leading-relaxed text-[#5A6259] sm:pl-[5.25rem]">
+                          {pillar.summary}
                         </p>
-                      </div>
-                    )}
+                      )}
 
-                    {isOpen && (
-                      <div className="px-3.5 sm:px-4 pb-3.5 pt-1 border-t border-[#00A859]/15 space-y-2.5">
-                        <div className="space-y-2 text-[10.5px] sm:text-[11px] text-[#3A4239] leading-relaxed text-justify pt-1.5 font-normal">
-                          {pillar.content.split('\n\n').map((paragraph, pIdx) => (
-                            <p key={pIdx}>{paragraph}</p>
-                          ))}
-                        </div>
+                      {/* Expandable content */}
+                      <div
+                        id={`${pillar.id}-panel`}
+                        aria-hidden={!isOpen}
+                        className={`grid transition-[grid-template-rows] duration-300 ease-out motion-reduce:transition-none ${
+                          isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
+                        }`}
+                      >
+                        <div className="overflow-hidden">
+                          <div className="space-y-4 border-t border-[#0F3D1E]/10 px-5 pb-5 pt-4 sm:pl-[5.25rem]">
+                            <div className="space-y-3 text-sm leading-relaxed text-[#3A4239] sm:text-base">
+                              {pillar.content.split('\n\n').map((paragraph, pIdx) => (
+                                <p key={pIdx}>{paragraph}</p>
+                              ))}
+                            </div>
 
-                        <div className="pt-2 border-t border-[#00A859]/10 flex items-center justify-between text-[8.5px] font-mono text-[#00A859] font-bold uppercase tracking-wider">
-                          <span className="flex items-center gap-1">
-                            <CheckCircle2 size={10} /> Key Operational Pillar
-                          </span>
-                          <span>RGG Leadership Standard</span>
+                            <div className="flex flex-wrap items-center justify-between gap-2 border-t border-dashed border-[#0F3D1E]/15 pt-3 text-xs font-bold uppercase tracking-wider text-[#00A859]">
+                              <span className="flex items-center gap-1.5">
+                                <CheckCircle2 size={14} /> Key Operational Pillar
+                              </span>
+                              <span>RGG Leadership Standard</span>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  </Reveal>
                 );
               })}
             </div>
 
           </div>
-
         </section>
 
         {/* ── 4. Additional Field Notes Grid ─────────────────────────────────── */}
-        <section className="max-w-6xl mx-auto px-4 md:px-8 space-y-4">
-          <div className="flex items-center justify-between border-b border-[#00A859]/20 pb-2">
-            <div className="space-y-0.5">
-              <span className="text-[8.5px] font-mono font-bold uppercase tracking-[0.15em] text-[#E5B800]">
-                From the Farm
-              </span>
-              <h3 className="text-lg sm:text-xl font-semibold text-[#0C1E12]">
+        <section className="mx-auto max-w-7xl space-y-6 px-4 md:px-8">
+          <Reveal className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+            <div className="space-y-3">
+              <Eyebrow>From the Farm</Eyebrow>
+              <h3 className="text-2xl font-extrabold leading-tight tracking-tight text-[#0F3D1E] sm:text-3xl lg:text-4xl">
                 Updates on Crops, Livestock, Soil, &amp; Water
               </h3>
             </div>
-            <span className="text-[10px] font-mono text-[#5A6259]">
+            <span className="inline-flex w-fit items-center rounded-full border border-[#0F3D1E]/15 bg-white px-3 py-1 text-xs font-semibold text-[#0F3D1E]">
               Field Notes Ledger
             </span>
-          </div>
+          </Reveal>
 
-          <div className="grid md:grid-cols-2 gap-4">
-            {filteredArticles.map((article) => (
-              <article 
-                key={article.id}
-                className="group border border-[#00A859]/20 bg-white p-4 shadow-2xs flex flex-col justify-between space-y-3 hover:border-[#00A859] transition-all"
-              >
-                <div className="space-y-2.5">
-                  <div className="relative h-36 w-full overflow-hidden border border-[#00A859]/15 bg-[#0C1E12]">
-                    <Image
-                      src={article.coverImage}
-                      alt={article.title}
-                      fill
-                      className="object-cover brightness-95 group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div className="absolute top-2 left-2 bg-[#0C1E12]/90 border border-white/20 px-1.5 py-0.5 text-white text-[7.5px] font-mono font-bold uppercase">
-                      {article.initiative}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between text-[9px] font-mono text-[#00A859] border-b border-[#00A859]/10 pb-1">
-                    <span className="flex items-center gap-1">
-                      <Calendar size={10} />
-                      {article.date}
-                    </span>
-                    <span>{article.readTime}</span>
-                  </div>
-
-                  <div className="space-y-0.5">
-                    <h4 className="text-base font-semibold text-[#0C1E12]">
-                      {article.title}
-                    </h4>
-
-                    <p className="text-[10px] text-[#5A6259] leading-relaxed text-justify font-normal">
-                      {article.excerpt}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="pt-2 border-t border-[#00A859]/10 flex items-center justify-between">
-                  <span className="text-[8.5px] font-mono text-[#5A6259]">
-                    By {article.author}
-                  </span>
-
-                  <button
-                    onClick={() => handleCopyLink(article.id)}
-                    className="inline-flex items-center gap-1 border border-[#00A859]/30 bg-[#FAF9F6] px-2 py-0.5 text-[8.5px] font-mono font-bold uppercase tracking-wider hover:bg-[#00A859] hover:text-white transition-colors cursor-pointer"
+          {filteredArticles.length === 0 ? (
+            <p className="rounded-[1.5rem] border border-dashed border-[#0F3D1E]/20 bg-white py-10 text-center text-sm text-[#5A6259]">
+              No field notes in this topic yet.
+            </p>
+          ) : (
+            <div className="grid gap-6 md:grid-cols-2">
+              {filteredArticles.map((article, i) => (
+                <Reveal key={article.id} delay={i * 100}>
+                  <article
+                    id={article.id}
+                    className="group flex h-full flex-col overflow-hidden rounded-[1.75rem] border border-[#0F3D1E]/10 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
                   >
-                    <span>Share Note</span>
-                    <ArrowUpRight size={10} />
-                  </button>
-                </div>
-              </article>
-            ))}
-          </div>
+                    <div className="relative h-52 w-full overflow-hidden bg-[#0C1E12]">
+                      <Image
+                        src={article.coverImage}
+                        alt={article.title}
+                        fill
+                        sizes="(min-width: 768px) 50vw, 100vw"
+                        className="object-cover brightness-95 transition-transform duration-700 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
+                      <span className="absolute left-4 top-4 rounded-full bg-[#FBC02D] px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-[#0F3D1E]">
+                        {article.initiative}
+                      </span>
+                    </div>
+
+                    <div className="flex flex-1 flex-col p-6">
+                      <div className="flex items-center justify-between gap-3 text-xs font-semibold text-[#00A859]">
+                        <span className="flex items-center gap-1.5">
+                          <Calendar size={14} />
+                          {article.date}
+                        </span>
+                        <span className="rounded-full bg-[#00A859]/10 px-2.5 py-0.5">{article.readTime}</span>
+                      </div>
+
+                      <h4 className="mt-4 text-xl font-bold leading-snug text-[#0F3D1E] transition-colors group-hover:text-[#00A859]">
+                        {article.title}
+                      </h4>
+                      <p className="mt-2 text-sm leading-relaxed text-[#5A6259]">{article.excerpt}</p>
+
+                      <div className="mt-auto flex items-center justify-between gap-3 border-t border-dashed border-[#0F3D1E]/15 pt-4 mt-5">
+                        <span className="text-xs font-semibold text-[#5A6259]">By {article.author}</span>
+
+                        <button
+                          onClick={() => handleCopyLink(article.id)}
+                          className={`inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-4 py-1.5 text-xs font-bold uppercase tracking-wider transition-colors ${
+                            copiedId === article.id
+                              ? 'border-[#00A859] bg-[#00A859] text-white'
+                              : 'border-[#0F3D1E]/20 bg-[#FAF9F6] text-[#0F3D1E] hover:border-[#0F3D1E] hover:bg-[#0F3D1E] hover:text-[#FBC02D]'
+                          }`}
+                        >
+                          {copiedId === article.id ? (
+                            <>
+                              <span>Copied</span>
+                              <Check size={13} />
+                            </>
+                          ) : (
+                            <>
+                              <span>Share Note</span>
+                              <ArrowUpRight size={13} />
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  </article>
+                </Reveal>
+              ))}
+            </div>
+          )}
         </section>
 
-        {/* ── 5. Photo Gallery Albums ─────────────────────────────────────────── */}
-        <section className="max-w-6xl mx-auto px-4 md:px-8 space-y-4">
-          <div className="flex items-center justify-between border-b border-[#00A859]/20 pb-2">
-            <div className="space-y-0.5">
-              <span className="text-[8.5px] font-mono font-bold uppercase tracking-[0.15em] text-[#E5B800]">
-                Our Farm Memories
-              </span>
-              <h3 className="text-lg sm:text-xl font-semibold text-[#0C1E12]">
-                Documented Visual Records &amp; Albums
-              </h3>
-            </div>
+        {/* ── 5. Photo Gallery Albums (green band) ──────────────────────────── */}
+        <section className="bg-gradient-to-b from-[#1C6B35] to-[#0F4620] py-12 text-white lg:py-14">
+          <div className="mx-auto max-w-7xl space-y-8 px-4 md:px-8">
+            <Reveal className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+              <div className="space-y-3">
+                <Eyebrow light>Our Farm Memories</Eyebrow>
+                <h3 className="text-2xl font-extrabold leading-tight tracking-tight text-white sm:text-3xl lg:text-4xl">
+                  Documented Visual Records &amp; Albums
+                </h3>
+              </div>
 
-            <Link
-              href="/gallery"
-              className="inline-flex items-center gap-1 text-[10px] font-mono text-[#00A859] font-bold uppercase tracking-wider hover:underline"
-            >
-              <span>View All Albums</span>
-              <ArrowUpRight size={11} />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {galleryAlbums.map((album) => (
-              <div 
-                key={album.id}
-                className="group border border-[#00A859]/20 bg-white p-3 shadow-2xs flex flex-col justify-between space-y-2.5 hover:border-[#00A859] transition-all"
+              <Link
+                href="/gallery"
+                className="group inline-flex w-fit items-center gap-4 rounded-full bg-white py-1.5 pl-6 pr-1.5 text-sm font-bold text-[#0F3D1E] transition-colors hover:bg-[#F5F2E8]"
               >
-                <div className="space-y-2">
-                  <div className="relative h-32 w-full overflow-hidden border border-[#00A859]/15 bg-[#0C1E12]">
-                    <Image
-                      src={album.coverImage}
-                      alt={album.title}
-                      fill
-                      className="object-cover brightness-95 group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div className="absolute top-1.5 left-1.5 bg-[#0C1E12]/90 border border-white/20 px-1 py-0.5 text-[#E5B800] text-[7.5px] font-mono font-bold">
-                      {album.imageCount} PHOTOS
+                <span>View All Albums</span>
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#FBC02D] text-[#0F3D1E] transition-transform duration-300 group-hover:translate-x-0.5">
+                  <ArrowUpRight size={15} strokeWidth={2.5} />
+                </span>
+              </Link>
+            </Reveal>
+
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+              {galleryAlbums.map((album, i) => (
+                <Reveal key={album.id} delay={i * 100}>
+                  <div className="group flex h-full flex-col overflow-hidden rounded-[1.75rem] bg-white p-3 text-[#0C1E12] shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl">
+                    <div className="relative h-44 w-full overflow-hidden rounded-[1.25rem] bg-[#0C1E12]">
+                      <Image
+                        src={album.coverImage}
+                        alt={album.title}
+                        fill
+                        sizes="(min-width: 640px) 33vw, 100vw"
+                        className="object-cover brightness-95 transition-transform duration-700 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
+                      <span className="absolute left-3 top-3 rounded-full bg-[#FBC02D] px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-[#0F3D1E]">
+                        {album.imageCount} Photos
+                      </span>
+                    </div>
+
+                    <div className="flex flex-1 flex-col px-3 pb-2 pt-4">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-[#00A859]">
+                        {album.location} • {album.date}
+                      </span>
+                      <h4 className="mt-2 text-lg font-bold leading-snug text-[#0F3D1E]">{album.title}</h4>
+                      <p className="mt-2 text-sm leading-relaxed text-[#5A6259]">{album.context}</p>
+
+                      <div className="mt-auto flex items-center justify-between border-t border-dashed border-[#0F3D1E]/15 pt-4 mt-4">
+                        <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#00A859]">
+                          <Camera size={14} />
+                          Verified Archive
+                        </span>
+                        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#FBC02D] text-[#0F3D1E] transition-transform duration-300 group-hover:translate-x-0.5">
+                          <ArrowUpRight size={15} strokeWidth={2.5} />
+                        </span>
+                      </div>
                     </div>
                   </div>
-
-                  <div className="space-y-0.5">
-                    <span className="text-[8px] font-mono text-[#00A859] font-bold uppercase tracking-wider">
-                      {album.location} • {album.date}
-                    </span>
-                    <h4 className="text-xs font-semibold text-[#0C1E12]">
-                      {album.title}
-                    </h4>
-                    <p className="text-[9.5px] text-[#5A6259] leading-relaxed text-justify font-normal">
-                      {album.context}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="pt-2 border-t border-[#00A859]/10 flex items-center justify-between text-[8.5px] font-mono text-[#00A859] font-bold">
-                  <span className="flex items-center gap-1">
-                    <Camera size={10} />
-                    Verified Archive
-                  </span>
-                  <ArrowUpRight size={10} />
-                </div>
-              </div>
-            ))}
+                </Reveal>
+              ))}
+            </div>
           </div>
         </section>
 

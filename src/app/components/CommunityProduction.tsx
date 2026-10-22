@@ -1,156 +1,219 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { 
-  Users, 
-  Sprout, 
-  CheckCircle2, 
-  ArrowUpRight, 
-  Award, 
-  TrendingUp, 
-  ShieldCheck,
-  Compass,
-  Building2
-} from 'lucide-react';
+import { Poppins, Caveat } from 'next/font/google';
+import { Users, Wheat, Check, ChevronRight, ShieldCheck, Building2 } from 'lucide-react';
+
+const poppins = Poppins({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700', '800'],
+  variable: '--font-poppins',
+  display: 'swap',
+});
+
+// Handwritten accent for the small eyebrow line
+const caveat = Caveat({
+  subsets: ['latin'],
+  weight: ['500', '600', '700'],
+  display: 'swap',
+});
+
+const checklist = [
+  {
+    title: 'Capacity Building',
+    text: 'Hands-on agronomic support, proper harvesting techniques, soil fertility management, and seed selection guidance.',
+  },
+  {
+    title: 'Market Access',
+    text: 'Aggregation of local produce to meet commercial buyer standards and guarantee fair value returns for smallholders.',
+  },
+  {
+    title: 'Value Chain',
+    text: 'Quality grading & market aggregation',
+  },
+];
+
+/* Fades + slides content in when it scrolls into view */
+function Reveal({
+  children,
+  className = '',
+  delay = 0,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  delay?: number;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [shown, setShown] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (typeof IntersectionObserver === 'undefined') {
+      setShown(true);
+      return;
+    }
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShown(true);
+          io.disconnect();
+        }
+      },
+      { threshold: 0.12 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      style={{ transitionDelay: `${delay}ms` }}
+      className={`transition-all duration-700 ease-out motion-reduce:transition-none ${
+        shown
+          ? 'translate-y-0 opacity-100'
+          : 'translate-y-6 opacity-0 motion-reduce:translate-y-0 motion-reduce:opacity-100'
+      } ${className}`}
+    >
+      {children}
+    </div>
+  );
+}
 
 export default function CommunityProduction() {
   return (
-    <section className="py-16 bg-[#FAF9F6] text-[#0C1E12]">
-      <div className="max-w-6xl mx-auto px-4 md:px-8 space-y-10">
-        
-        {/* ── Main Panel Frame ────────────────────────────────────────────── */}
-        <div className="border border-[#00A859]/25 bg-white shadow-2xs overflow-hidden relative">
-          
-          {/* Panel Top Status Header — Leaf Green Background */}
-          <div className="bg-[#00A859] text-white px-6 py-3.5 flex flex-wrap items-center justify-between gap-3 text-[10px] font-mono border-b border-[#00A859]">
-            <div className="flex items-center gap-2">
-              <span className="p-1 border border-white/40 bg-white/10 text-[#E5B800]">
-                <Users size={12} />
-              </span>
-              <span className="font-bold uppercase tracking-[0.2em] text-[#E5B800]">
-                OUTGROWER &amp; COMMUNITY NETWORK
-              </span>
-            </div>
-            <span className="text-white/90 uppercase tracking-wider flex items-center gap-1.5 font-semibold">
-              <Building2 size={11} className="text-[#E5B800]" />
-              Kirehe Smallholder Producer Program
-            </span>
-          </div>
+    <section
+      className={`${poppins.className} relative overflow-hidden bg-[#FAF9F6] py-14 text-[#0C1E12] lg:py-16`}
+    >
+      {/* soft background glows */}
+      <div aria-hidden="true" className="pointer-events-none absolute -left-24 top-1/3 h-72 w-72 rounded-full bg-[#00A859]/10 blur-3xl" />
+      <div aria-hidden="true" className="pointer-events-none absolute -right-24 top-0 h-72 w-72 rounded-full bg-[#FBC02D]/15 blur-3xl" />
 
-          <div className="p-6 sm:p-10 space-y-8">
-            
-            {/* Headline & Abstract Grid */}
-            <div className="grid lg:grid-cols-12 gap-8 items-start">
-              
-              <div className="lg:col-span-7 space-y-4">
-                <div className="inline-flex items-center gap-1.5 border border-[#E5B800]/60 bg-[#E5B800]/10 px-2.5 py-0.5 text-[9px] font-mono uppercase tracking-[0.15em] text-[#0C1E12] font-bold">
-                  <Compass size={10} className="text-[#00A859]" />
-                  <span>GRASSROOTS INCLUSION LEDGER</span>
-                </div>
+      <div className="relative mx-auto max-w-7xl px-4 md:px-8">
+        <div className="grid items-start gap-8 lg:grid-cols-[1.85fr_1fr] lg:gap-10">
 
-                <h2 
-                  className="text-2xl sm:text-4xl font-semibold text-[#0C1E12] leading-tight"
-                  style={{ fontFamily: 'var(--font-display)' }}
-                >
-                  Small Scale Producer (SSP) Community Production
-                </h2>
-
-                <p className="text-xs sm:text-sm text-[#3A4239] leading-relaxed text-justify font-normal">
-                  Real Green Gold Ltd is dedicated to empowering small-scale producers by providing comprehensive training and support. They help SSPs enhance their agricultural practices, optimize production capabilities, and increase their market competitiveness, fostering sustainable development in local communities.
+          {/* ═══ Left: heading, copy, button, photo ═══════════════════ */}
+          <div className="space-y-6">
+            <Reveal className="space-y-5">
+              {/* Eyebrow row */}
+              <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+                <p className={`${caveat.className} flex items-center gap-2 text-2xl font-semibold text-[#1E8A3C] sm:text-[1.7rem]`}>
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0F3D1E] text-[#FBC02D]">
+                    <Users size={15} />
+                  </span>
+                  Outgrower &amp; Community Network
                 </p>
-              </div>
-
-              {/* Program Metrics Light Box */}
-              <div className="lg:col-span-5 border border-[#00A859]/20 bg-[#FAF9F6] p-5 space-y-4">
-                <span className="text-[8.5px] font-mono font-bold uppercase tracking-[0.2em] text-[#00A859] block border-b border-[#00A859]/15 pb-2">
-                  PROGRAM FOCUS &amp; TARGETS
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-[#0F3D1E]/15 bg-white px-3 py-1 text-[11px] font-semibold text-[#0F3D1E]">
+                  <Building2 size={12} className="text-[#00A859]" />
+                  Kirehe Smallholder Producer Program
                 </span>
-
-                <div className="grid grid-cols-2 gap-4 font-mono text-[10px]">
-                  <div className="space-y-1">
-                    <span className="text-[#00A859] font-bold block text-sm">LOCAL IMPACT</span>
-                    <span className="text-[#5A6259] text-[9px] block">Agronomic extension &amp; seed guidance</span>
-                  </div>
-                  <div className="space-y-1">
-                    <span className="text-[#0C1E12] font-bold block text-sm">VALUE CHAIN</span>
-                    <span className="text-[#5A6259] text-[9px] block">Quality grading &amp; market aggregation</span>
-                  </div>
-                </div>
               </div>
 
-            </div>
+              {/* Headline */}
+              <h2 className="text-3xl font-extrabold leading-[1.1] tracking-tight text-[#0F3D1E] sm:text-4xl lg:text-[2.9rem]">
+                Small Scale Producer (SSP) Community Production
+              </h2>
 
-            {/* Split Visual & Feature Block */}
-            <div className="grid lg:grid-cols-12 gap-8 items-center pt-2 border-t border-[#00A859]/15">
-              
-              {/* Feature Cards Grid */}
-              <div className="lg:col-span-7 grid sm:grid-cols-2 gap-4">
-                <div className="border border-[#00A859]/15 bg-[#FAF9F6] p-4 space-y-2 hover:border-[#00A859] transition-colors">
-                  <div className="flex items-center gap-2 text-[#00A859]">
-                    <Award size={14} />
-                    <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-[#0C1E12]">
-                      Capacity Building
-                    </span>
-                  </div>
-                  <p className="text-[10.5px] text-[#5A6259] leading-relaxed text-justify font-normal">
-                    Hands-on agronomic support, proper harvesting techniques, soil fertility management, and seed selection guidance.
-                  </p>
-                </div>
+              {/* Copy */}
+              <p className="max-w-3xl text-base leading-relaxed text-[#5A6259] lg:text-lg">
+                Real Green Gold Ltd is dedicated to empowering small-scale producers by providing comprehensive training and support. They help SSPs enhance their agricultural practices, optimize production capabilities, and increase their market competitiveness, fostering sustainable development in local communities.
+              </p>
 
-                <div className="border border-[#00A859]/15 bg-[#FAF9F6] p-4 space-y-2 hover:border-[#00A859] transition-colors">
-                  <div className="flex items-center gap-2 text-[#00A859]">
-                    <TrendingUp size={14} />
-                    <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-[#0C1E12]">
-                      Market Access
-                    </span>
-                  </div>
-                  <p className="text-[10.5px] text-[#5A6259] leading-relaxed text-justify font-normal">
-                    Aggregation of local produce to meet commercial buyer standards and guarantee fair value returns for smallholders.
-                  </p>
-                </div>
-              </div>
+              {/* Pill button */}
+              <Link
+                href="/about-us#community"
+                className="group inline-flex items-center gap-6 rounded-full bg-[#0F3D1E] py-2 pl-8 pr-2 text-base font-semibold text-white shadow-md transition-colors hover:bg-[#0B3017]"
+              >
+                <span>Partner with SSP Network</span>
+                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#FBC02D] text-[#0F3D1E] transition-transform duration-300 group-hover:translate-x-1">
+                  <ChevronRight size={20} strokeWidth={2.5} />
+                </span>
+              </Link>
+            </Reveal>
 
-              {/* Light Panoramic Photo Frame */}
-              <div className="lg:col-span-5 relative h-48 sm:h-52 w-full border border-[#00A859]/20 bg-[#FAF9F6] overflow-hidden group">
+            {/* Photo */}
+            <Reveal delay={120}>
+              <div className="group relative h-56 w-full overflow-hidden rounded-[2rem] bg-[#0C1E12] shadow-lg sm:h-64 lg:h-72">
                 <Image
                   src="/assets/home.jpg"
                   alt="Small Scale Producer agricultural work in Kirehe"
                   fill
-                  className="object-cover brightness-95 group-hover:scale-105 transition-transform duration-500"
+                  sizes="(min-width: 1024px) 60vw, 100vw"
+                  className="object-cover brightness-95 transition-transform duration-700 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-                <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-[8px] font-mono font-bold text-white uppercase">
-                  <span className="bg-white/90 border border-[#00A859]/30 px-2 py-0.5 text-[#0C1E12]">
-                    VERIFIED FIELD WORK
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between gap-3 text-[11px] font-semibold text-white">
+                  <span className="rounded-full bg-white/90 px-3 py-1 uppercase tracking-wider text-[#0F3D1E]">
+                    Verified Field Work
                   </span>
-                  <span className="drop-shadow-xs">KIREHE SITE</span>
+                  <span className="uppercase tracking-wider drop-shadow">Kirehe Site</span>
                 </div>
               </div>
+            </Reveal>
+          </div>
 
-            </div>
-
-            {/* Bottom Action Footer */}
-            <div className="pt-4 border-t border-[#00A859]/15 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <Link
-                href="/about-us#community"
-                className="inline-flex items-center justify-center gap-2 border border-[#00A859] bg-[#00A859] text-white px-6 py-2.5 text-xs font-mono font-bold uppercase tracking-wider hover:bg-[#008A47] transition-colors shadow-2xs"
-              >
-                <span>Partner with SSP Network</span>
-                <ArrowUpRight size={13} />
-              </Link>
-
-              <div className="flex items-center gap-2 text-[9.5px] font-mono text-[#00A859] font-bold uppercase tracking-wider">
-                <ShieldCheck size={12} />
-                <span>Verified Outgrower Community Initiative</span>
+          {/* ═══ Right: yellow stat card + dark checklist card ════════ */}
+          <div className="space-y-6">
+            {/* Yellow card */}
+            <Reveal delay={80}>
+              <div className="relative overflow-hidden rounded-[2rem] bg-[#F9C22E] p-8 text-[#3B1F06] shadow-lg transition-transform duration-300 hover:-translate-y-1">
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-3 rounded-[1.5rem] border border-dashed border-[#3B1F06]/25"
+                />
+                <div className="relative flex items-start justify-between gap-4">
+                  <p className="pt-1 text-lg font-medium">Program Focus &amp; Targets</p>
+                  <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#4A2408] text-[#FBC02D]">
+                    <Wheat size={26} />
+                  </span>
+                </div>
+                <p className="relative mt-3 text-4xl font-extrabold leading-tight tracking-tight text-[#4A2408] xl:text-[2.6rem]">
+                  Local Impact
+                </p>
+                <p className="relative mt-3 text-base leading-relaxed">
+                  Agronomic extension &amp; seed guidance
+                </p>
               </div>
-            </div>
+            </Reveal>
 
+            {/* Dark green card */}
+            <Reveal delay={200}>
+              <div className="relative overflow-hidden rounded-[2rem] bg-[#0F4620] p-8 text-white shadow-lg">
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-3 rounded-[1.5rem] border border-dashed border-white/20"
+                />
+
+                <p className="relative mb-6 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-[#FBC02D]">
+                  Grassroots Inclusion Ledger
+                </p>
+
+                <ul className="relative space-y-5">
+                  {checklist.map((item) => (
+                    <li key={item.title} className="flex items-start gap-3.5">
+                      <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#FBC02D] text-[#0F3D1E]">
+                        <Check size={15} strokeWidth={3} />
+                      </span>
+                      <div>
+                        <p className="text-base font-semibold leading-snug">{item.title}</p>
+                        <p className="mt-1 text-sm leading-relaxed text-white/70">{item.text}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="relative mt-6 flex items-center gap-3 border-t border-white/20 pt-5 text-sm font-semibold">
+                  <ShieldCheck size={20} className="shrink-0 text-[#FBC02D]" />
+                  <span>Verified Outgrower Community Initiative</span>
+                </div>
+              </div>
+            </Reveal>
           </div>
 
         </div>
-
       </div>
     </section>
   );

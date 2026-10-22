@@ -1,18 +1,34 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Poppins } from 'next/font/google';
-import { 
-  Compass, 
-  ArrowUpRight, 
-  Sprout, 
-  Filter, 
-  Search, 
-  X, 
-  MessageSquare 
+import {
+  Compass,
+  ArrowUpRight,
+  Sprout,
+  Filter,
+  Search,
+  X,
+  MessageSquare,
+  Pause,
+  Play,
 } from 'lucide-react';
+import type { IconType } from 'react-icons';
+import {
+  GiFarmTractor,
+  GiPlantWatering,
+  GiAvocado,
+  GiBananaBunch,
+  GiBeehive,
+  GiPlantSeed,
+  GiPlantRoots,
+  GiTeapotLeaves,
+  GiCow,
+  GiSmartphone,
+  GiSprout,
+} from 'react-icons/gi';
 import NavBar from '../components/NavBar';
 import Footer from '../components/Footer';
 import CommunityProduction from '../components/CommunityProduction';
@@ -26,6 +42,53 @@ const poppins = Poppins({
   variable: '--font-poppins',
   display: 'swap',
 });
+
+// Solid icon (Game Icons set via react-icons) shown in the yellow circle of each slide.
+// Each one matches its topic; the set is consistent in style with the footer's react-icons.
+const initiativeIcons: Record<string, IconType> = {
+  'agro-tourism': GiFarmTractor,
+  irrigation: GiPlantWatering,
+  avocado: GiAvocado,
+  banana: GiBananaBunch,
+  'beekeeping-carpentry': GiBeehive,
+  'tech-seed-plotting': GiPlantSeed,
+  'regenerative-agriculture': GiPlantRoots,
+  'traditional-beverages': GiTeapotLeaves,
+  'animal-kingdom': GiCow,
+  ict4ag: GiSmartphone,
+};
+
+// Carousel auto-advance interval (ms)
+const SLIDE_INTERVAL_MS = 3000;
+
+/* Tall grass blades + reed stalks along the bottom of the hero.
+   The tile repeats horizontally; its fill matches the page background (#FAF9F6). */
+const GRASS = (() => {
+  const h = 60;
+  const base = 50;
+  const bladeW = 7;
+  const tips = [
+    22, 34, 12, 30, 18, 38, 10, 32, 20, 36, 14, 28, 24, 38, 8, 30, 18, 34,
+    12, 32, 22, 36, 16, 28, 20, 34, 10, 30, 24, 38, 14, 32, 18, 36, 12, 28,
+  ];
+  const w = tips.length * bladeW;
+  let d = `M0 ${h} V${base}`;
+  tips.forEach((tip, i) => {
+    const x = i * bladeW;
+    d += ` L${x + bladeW / 2} ${tip} L${x + bladeW} ${base}`;
+  });
+  d += ` V${h} Z`;
+  const stalks: [number, number][] = [[46, 6], [120, 2], [180, 8], [232, 4]];
+  const reeds = stalks
+    .map(
+      ([x, top]) =>
+        `<rect x='${x}' y='${top + 8}' width='1.8' height='${base - top - 8}' fill='#FAF9F6'/>` +
+        `<ellipse cx='${x + 0.9}' cy='${top + 8}' rx='3' ry='8' fill='#FAF9F6'/>`
+    )
+    .join('');
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 ${w} ${h}'><path fill='#FAF9F6' d='${d}'/>${reeds}</svg>`;
+  return { image: `url("data:image/svg+xml,${encodeURIComponent(svg)}")`, width: w, height: h };
+})();
 
 // ── 10 Anchor Initiatives Data Ledger ──────────────────────────────────────────
 const initiativesData = [
@@ -201,6 +264,7 @@ export default function InitiativesPage() {
     'Crops & Orchards',
     'Soil & Water',
     'Livestock & Soil',
+    'Stewardship & Craft',
     'Agro-Tourism & Education',
     'Agtech & Trials',
     'Culture & Enterprise'
@@ -214,51 +278,160 @@ export default function InitiativesPage() {
     return matchesCategory && matchesSearch;
   });
 
+  // ── Carousel: 4 cards on desktop, 2 on tablet, 1 on phones; slides every 3 seconds ──
+  const [perView, setPerView] = useState(4);
+  const [slideIndex, setSlideIndex] = useState(0);
+  const [playing, setPlaying] = useState(true);
+  const [hovered, setHovered] = useState(false);
+  const prevFilterKey = useRef(`${activeCategory}|${searchQuery}`);
+
+  useEffect(() => {
+    const update = () => {
+      const w = window.innerWidth;
+      setPerView(w >= 1024 ? 4 : w >= 640 ? 2 : 1);
+    };
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
+
+  const total = filteredInitiatives.length;
+  const maxIndex = Math.max(0, total - perView);
+  const currentIndex = Math.min(slideIndex, maxIndex);
+
+  // Jump to a card when the page is opened with /initiatives#avocado etc.
+  useEffect(() => {
+    const hash = window.location.hash.replace('#', '');
+    const i = initiativesData.findIndex((x) => x.id === hash);
+    if (i >= 0) {
+      setSlideIndex(i);
+      setPlaying(false);
+    }
+  }, []);
+
+  // Start again from the first card when the filter or search changes
+  useEffect(() => {
+    const key = `${activeCategory}|${searchQuery}`;
+    if (prevFilterKey.current !== key) {
+      prevFilterKey.current = key;
+      setSlideIndex(0);
+    }
+  }, [activeCategory, searchQuery]);
+
+  // Auto-advance (pauses on hover/focus, while the modal is open, or when paused)
+  const paused = hovered || !playing || selectedInitiative !== null;
+  useEffect(() => {
+    if (paused || maxIndex === 0) return;
+    const timer = setInterval(() => {
+      setSlideIndex((prev) => {
+        const cur = Math.min(prev, maxIndex);
+        return cur >= maxIndex ? 0 : cur + 1;
+      });
+    }, SLIDE_INTERVAL_MS);
+    return () => clearInterval(timer);
+  }, [paused, maxIndex]);
+
   return (
     <div className={`${poppins.className} min-h-screen flex flex-col bg-[#FAF9F6] text-[#0C1E12] selection:bg-[#E5B800] selection:text-[#0C1E12]`}>
+      <style>{`
+        @keyframes rgg-rise { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
+        .rgg-rise { opacity: 0; animation: rgg-rise 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+        @media (prefers-reduced-motion: reduce) {
+          .rgg-rise { opacity: 1; animation: none; }
+        }
+      `}</style>
+
       {/* Global Navigation Component */}
       <NavBar />
 
-      <main className="flex-grow space-y-12">
-        
-        {/* ── 1. Hero Header Section ──────────────────────────────────────── */}
-        <section className="relative h-[55vh] min-h-[480px] flex items-center justify-center overflow-hidden border-b border-[#00A859]/30 bg-[#0C1E12]">
-          <Image
-    src="/assets/home.jpg"
-    alt="Real Green Gold Ltd farm initiative landscape in Kirehe, Rwanda"
-    fill
-    priority
-    quality={95}
-    sizes="100vw"
-    className="object-cover object-center brightness-60 contrast-[1.05] scale-105 transition-transform duration-1000"
-  />
+      <main className="flex-grow space-y-8">
 
-  {/* Transparent Gradient Overlays */}
-  <div className="absolute inset-0 bg-gradient-to-r from-[#0C1E12]/80 via-[#0C1E12]/50 to-transparent z-10" />
-  <div className="absolute inset-0 bg-gradient-to-t from-[#0C1E12]/90 via-transparent to-black/30 z-10" />
+        {/* ── 1. Hero Header Section (rounded inset hero, same format as the Our Team hero) ── */}
+        <section className="px-3 pt-3 sm:px-6 sm:pt-4">
+          <div className="relative flex items-end overflow-hidden rounded-[2rem] bg-[#0C1E12] sm:rounded-[2.75rem]">
+            {/* Background image */}
+            <Image
+              src="/assets/home.jpg"
+              alt="Real Green Gold Ltd farm initiative landscape in Kirehe, Rwanda"
+              fill
+              priority
+              quality={95}
+              sizes="100vw"
+              className="object-cover object-center brightness-60 contrast-[1.05] scale-105 transition-transform duration-1000"
+            />
 
-          <div className="relative z-20 max-w-4xl mx-auto px-6 text-center space-y-6 pt-12">
-            <div className="inline-flex items-center gap-2 border border-[#E5B800]/60 bg-[#0C1E12]/80 backdrop-blur-md px-3.5 py-1 text-xs font-mono uppercase tracking-[0.2em] text-[#E5B800]">
-              <Compass size={13} className="text-[#00A859]" />
-              <span>Ten Anchor Business &amp; Learning Directions</span>
+            {/* Gradient overlays */}
+            <div className="absolute inset-0 z-10 bg-gradient-to-r from-[#0C1E12]/75 via-[#0C1E12]/35 to-transparent" />
+            <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#0C1E12]/60 via-transparent to-black/25" />
+
+            {/* Content — pt-36 clears the fixed NavBar */}
+            <div className="relative z-20 mx-auto w-full max-w-7xl px-6 pb-14 pt-24 sm:px-12 lg:px-20">
+              <div className="max-w-4xl space-y-4">
+                {/* Eyebrow */}
+                <p
+                  className="rgg-rise flex items-center gap-3 text-base font-semibold text-[#E5B800] sm:text-lg"
+                  style={{ animationDelay: '0ms' }}
+                >
+                  <Compass size={22} strokeWidth={1.8} className="shrink-0" />
+                  Ten Anchor Business &amp; Learning Directions
+                </p>
+
+                {/* Headline */}
+                <h1
+                  className="rgg-rise text-5xl font-medium leading-[1.08] tracking-tight text-[#FAF9F6] drop-shadow-sm sm:text-5xl lg:text-6xl"
+                  style={{ fontFamily: 'var(--font-display, Georgia, serif)', animationDelay: '100ms' }}
+                >
+                  Practical Farm <span className="italic text-[#A5D88F]">Initiatives</span>
+                </h1>
+
+                {/* Accent underline */}
+                <div className="rgg-rise h-1 w-24 rounded-full bg-[#E5B800]" style={{ animationDelay: '200ms' }} />
+
+                {/* Lead paragraph */}
+                <p
+                  className="rgg-rise max-w-3xl text-justify text-base font-normal leading-relaxed text-[#FAF9F6]/90 sm:text-lg"
+                  style={{ animationDelay: '300ms' }}
+                >
+                  Our initiatives connect food production, resource stewardship, learning, and enterprise. Each begins with a practical question: what challenge are we addressing, who could benefit, and how can the activity support itself?
+                </p>
+
+                {/* Actions */}
+                <div className="rgg-rise flex flex-wrap items-center gap-3 pt-1" style={{ animationDelay: '400ms' }}>
+                  <a
+                    href="#initiatives-list"
+                    className="inline-flex items-center gap-3 rounded-full bg-[#E5B800] px-7 py-3 text-base font-semibold text-[#0C1E12] shadow-md transition-colors hover:bg-[#F2C94C]"
+                  >
+                    Browse Initiatives <ArrowUpRight size={18} />
+                  </a>
+                  <Link
+                    href="/contact"
+                    className="inline-flex items-center gap-3 rounded-full border border-white/50 bg-white/10 px-7 py-3 text-base font-semibold text-white backdrop-blur-md transition-colors hover:bg-white hover:text-[#0C1E12]"
+                  >
+                    Contact Us <ArrowUpRight size={18} />
+                  </Link>
+                </div>
+              </div>
             </div>
 
-            <h1 className="text-3xl sm:text-5xl md:text-6xl font-semibold leading-[1.1] text-[#FAF9F6] tracking-tight">
-              Practical Farm Initiatives
-            </h1>
-
-            <div className="w-16 h-0.5 bg-[#E5B800] mx-auto" />
-
-            <p className="max-w-2xl mx-auto text-xs sm:text-sm font-normal text-[#FAF9F6]/85 leading-relaxed text-justify">
-              Our initiatives connect food production, resource stewardship, learning, and enterprise. Each begins with a practical question: what challenge are we addressing, who could benefit, and how can the activity support itself?
-            </p>
+            {/* Grass + reed stalks along the bottom edge */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -bottom-px left-0 right-0 z-30"
+              style={{
+                height: GRASS.height,
+                backgroundImage: GRASS.image,
+                backgroundRepeat: 'repeat-x',
+                backgroundSize: `${GRASS.width}px ${GRASS.height}px`,
+                backgroundPosition: 'left bottom',
+              }}
+            />
           </div>
         </section>
 
         {/* ── 2. Filter & Live Search Toolbar ─────────────────────────────── */}
-        <section className="max-w-6xl mx-auto px-4 md:px-8 space-y-3">
+        <section id="initiatives-list" className="max-w-6xl mx-auto px-4 md:px-8 space-y-3 scroll-mt-24">
           <div className="border border-[#00A859]/20 bg-white p-3.5 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 shadow-2xs">
-            
+
             {/* Category Filter Chips */}
             <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
               <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#00A859] shrink-0 pr-1 flex items-center gap-1">
@@ -294,74 +467,126 @@ export default function InitiativesPage() {
           </div>
         </section>
 
-        {/* ── 3. Initiatives Card Deck Section ────────────────────────────── */}
-        <section className="max-w-6xl mx-auto px-4 md:px-8 space-y-6">
-          <div className="border-b border-[#00A859]/20 pb-3 flex flex-col sm:flex-row sm:items-end justify-between gap-3">
-            <div className="space-y-1">
-              <div className="inline-flex items-center gap-1.5 border border-[#E5B800]/50 bg-[#0C1E12]/5 px-2 py-0.5 text-[9px] font-mono uppercase tracking-[0.15em] text-[#00A859]">
-                <Sprout size={10} className="text-[#00A859]" />
-                <span>INTEGRATED SYSTEM LEDGER</span>
+        {/* ── 3. Initiatives Slider (4 per view, slides every 3 seconds) ───── */}
+        <section className="bg-gradient-to-b from-[#1C6B35] to-[#0F4620] py-12 text-white lg:py-14">
+          <div className="mx-auto max-w-7xl px-4 md:px-8">
+            <div className="mb-10 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+              <div className="space-y-1.5">
+                <div className="inline-flex items-center gap-1.5 border border-[#FBC02D]/50 bg-white/5 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.15em] text-[#FBC02D]">
+                  <Sprout size={10} />
+                  <span>INTEGRATED SYSTEM LEDGER</span>
+                </div>
+                <h2 className="text-xl font-semibold text-white sm:text-2xl">Our Ten Anchor Directions</h2>
               </div>
-              <h2 className="text-xl sm:text-2xl font-semibold text-[#0C1E12]">
-                Our Ten Anchor Directions
-              </h2>
+              <span className="font-mono text-[10px] text-white/70">
+                Showing {filteredInitiatives.length} of {initiativesData.length} Anchor Initiatives
+              </span>
             </div>
-            <span className="text-[10px] font-mono text-[#5A6259]">
-              Showing {filteredInitiatives.length} of {initiativesData.length} Anchor Initiatives
-            </span>
-          </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredInitiatives.map((init) => (
-              <div
-                key={init.id}
-                id={init.id}
-                onClick={() => setSelectedInitiative(init)}
-                className="group border border-[#00A859]/20 bg-white p-4 shadow-2xs flex flex-col justify-between space-y-3 hover:border-[#00A859] transition-all cursor-pointer"
-              >
-                <div className="space-y-2.5">
-                  <div className="relative h-36 w-full overflow-hidden border border-[#00A859]/15 bg-[#0C1E12]">
-                    <Image
-                      src={init.image}
-                      alt={init.title}
-                      fill
-                      className="object-cover brightness-95 group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div className="absolute top-2 left-2 bg-[#0C1E12]/90 border border-white/20 px-1.5 py-0.5 text-white text-[7.5px] font-mono font-bold uppercase">
-                      {init.category}
+            {total === 0 ? (
+              <p className="py-10 text-center font-mono text-xs text-white/70">
+                No initiatives match your search.
+              </p>
+            ) : (
+              <>
+                <div
+                  className="overflow-hidden"
+                  onMouseEnter={() => setHovered(true)}
+                  onMouseLeave={() => setHovered(false)}
+                  onFocusCapture={() => setHovered(true)}
+                  onBlurCapture={() => setHovered(false)}
+                >
+                  <div
+                    className={`flex transition-transform duration-700 ease-in-out motion-reduce:transition-none ${
+                      maxIndex === 0 ? 'justify-center' : ''
+                    }`}
+                    style={{ transform: `translateX(-${currentIndex * (100 / perView)}%)` }}
+                  >
+                    {filteredInitiatives.map((init, i) => {
+                      const Icon = initiativeIcons[init.id] || GiSprout;
+                      const visible = i >= currentIndex && i < currentIndex + perView;
+                      return (
+                        <div
+                          key={init.id}
+                          id={init.id}
+                          role="button"
+                          tabIndex={visible ? 0 : -1}
+                          aria-hidden={!visible}
+                          aria-label={`Open ${init.title}`}
+                          onClick={() => setSelectedInitiative(init)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              setSelectedInitiative(init);
+                            }
+                          }}
+                          style={{ flex: `0 0 ${100 / perView}%` }}
+                          className="group relative flex cursor-pointer flex-col items-center px-5 text-center outline-none focus-visible:ring-2 focus-visible:ring-[#FBC02D]"
+                        >
+                          {/* dashed divider between columns (clipped at the left edge) */}
+                          <span
+                            aria-hidden="true"
+                            className="absolute -left-px bottom-2 top-2 border-l border-dashed border-white/25"
+                          />
+
+                          <span className="flex h-[88px] w-[88px] shrink-0 items-center justify-center rounded-full bg-[#FBC02D] text-[#5B2A06] shadow-md transition-transform duration-300 group-hover:-translate-y-1 group-hover:scale-105">
+                            <Icon size={42} aria-hidden="true" />
+                          </span>
+
+                          <p className="mt-5 font-mono text-[9.5px] font-bold uppercase tracking-[0.14em] text-[#FBC02D]">
+                            {init.category}
+                          </p>
+                          <h3 className="mt-1.5 text-lg font-bold leading-snug text-white transition-colors group-hover:text-[#FBC02D]">
+                            {init.title}
+                          </h3>
+                          <p className="mt-1 font-mono text-[10.5px] leading-snug text-white/60">{init.subtitle}</p>
+                          <p className="mt-3 line-clamp-4 text-sm leading-relaxed text-white/85">{init.summary}</p>
+
+                          <div className="mt-auto flex flex-col items-center gap-2 pt-4">
+                            <span className="border border-white/25 bg-white/10 px-2 py-0.5 font-mono text-[8.5px] font-bold uppercase text-[#FBC02D]">
+                              {init.stage}
+                            </span>
+                            <span className="inline-flex items-center gap-1 font-mono text-[10px] font-bold text-[#FBC02D] group-hover:underline">
+                              Inspect Details <ArrowUpRight size={11} />
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Dots + play/pause */}
+                {maxIndex > 0 && (
+                  <div className="mt-10 flex items-center justify-center gap-4">
+                    <div className="flex items-center gap-3" role="tablist" aria-label="Initiative slides">
+                      {Array.from({ length: maxIndex + 1 }).map((_, i) => (
+                        <button
+                          key={i}
+                          type="button"
+                          role="tab"
+                          aria-selected={i === currentIndex}
+                          aria-label={`Go to slide ${i + 1}`}
+                          onClick={() => setSlideIndex(i)}
+                          className={`rounded-full bg-white transition-all duration-300 ${
+                            i === currentIndex ? 'h-3.5 w-3.5' : 'h-2 w-2 opacity-70 hover:opacity-100'
+                          }`}
+                        />
+                      ))}
                     </div>
+                    <button
+                      type="button"
+                      onClick={() => setPlaying((v) => !v)}
+                      aria-label={playing ? 'Pause automatic sliding' : 'Resume automatic sliding'}
+                      title={playing ? 'Pause' : 'Play'}
+                      className="flex h-8 w-8 items-center justify-center rounded-full border border-white/30 text-white transition-colors hover:bg-white/15"
+                    >
+                      {playing ? <Pause size={13} /> : <Play size={13} />}
+                    </button>
                   </div>
-
-                  <div className="flex items-center justify-between text-[8.5px] font-mono border-b border-[#00A859]/10 pb-1.5">
-                    <span className={`px-2 py-0.5 border font-bold uppercase ${init.stageColor}`}>
-                      {init.stage}
-                    </span>
-                    <span className="text-[#5A6259]">RGG Kirehe</span>
-                  </div>
-
-                  <div className="space-y-0.5">
-                    <h3 className="text-base font-semibold text-[#0C1E12] group-hover:text-[#00A859] transition-colors">
-                      {init.title}
-                    </h3>
-                    <p className="text-[10px] text-[#5A6259] font-mono">
-                      {init.subtitle}
-                    </p>
-                    <p className="text-[10px] text-[#3A4239] leading-relaxed text-justify font-normal pt-1">
-                      {init.summary}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="pt-2 border-t border-[#00A859]/10 flex items-center justify-between text-[8.5px] font-mono">
-                  <span className="text-[#5A6259] truncate max-w-[170px]">
-                    Value: {init.revenueValue}
-                  </span>
-                  <span className="text-[#00A859] font-bold inline-flex items-center gap-0.5 group-hover:underline">
-                    Inspect Details <ArrowUpRight size={10} />
-                  </span>
-                </div>
-              </div>
-            ))}
+                )}
+              </>
+            )}
           </div>
         </section>
 
@@ -369,7 +594,7 @@ export default function InitiativesPage() {
         {selectedInitiative && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0C1E12]/80 backdrop-blur-xs">
             <div className="border border-[#00A859]/30 bg-white max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-xl space-y-5 relative">
-              
+
               {/* Modal Close Button */}
               <button
                 onClick={() => setSelectedInitiative(null)}
@@ -460,19 +685,10 @@ export default function InitiativesPage() {
             </div>
           </div>
         )}
-
-        {/* ── 5. Imported Community Production Section ──────────────────── */}
         <CommunityProduction />
-
-        {/* ── 6. Imported Agricultural Innovation Section ───────────────── */}
         <AgriculturalInnovation />
-
-        {/* ── 7. Imported Global Contact Strip ───────────────────────────── */}
         <ContactStrip />
-
       </main>
-
-      {/* Global Footer Component */}
       <Footer />
     </div>
   );

@@ -90,7 +90,7 @@ const verifiedTeam = [
     name: 'Pacifique Nshimiyimana',
     role: 'Founder and CEO',
     location: 'Kirehe, Rwanda',
-    image: '/assets/home.jpg',
+    image: '/assets/Pacific.jpg',
     responsibility: 'Executive Strategy & Strategic Partnerships',
     bio: 'Pacifique founded Real Green Gold Ltd as his first business. His background in biotechnology, agricultural enterprise, and farmer engagement informs the farm’s direction. He connects the practical lessons of farming with a wider commitment to entrepreneurship and leadership that responds to community needs. At RGG, his role is to guide strategy, build relationships, and support the team in translating ideas into workable activities.',
     learningQuote:

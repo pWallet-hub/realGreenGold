@@ -11,28 +11,28 @@ const farmMomentsData = [
     icon: Droplets,
     title: 'Crop & Irrigation Observation',
     caption: 'Field monitoring across avocado, banana, and vegetable plots in Kirehe.',
-    src: '/assets/home.jpg',
+    src: '/assets/avocado.jpg',
   },
   {
     id: 2,
     icon: Leaf,
     title: 'Soil & Compost Stewardship',
     caption: 'Organic matter management connecting livestock care with soil fertility.',
-    src: '/assets/home.jpg',
+    src: '/assets/soil.jpg',
   },
   {
     id: 3,
     icon: Flower2,
     title: 'Pollinator Habitat Care',
     caption: 'Flowering spaces and bee sanctuary management integrated with crop areas.',
-    src: '/assets/home.jpg',
+    src: '/assets/pollinator.jpg',
   },
   {
     id: 4,
     icon: Users,
     title: 'Community & Agronomic Learning',
     caption: 'Practical exchange and field visits with local farmers and collaborators.',
-    src: '/assets/home.jpg',
+    src: '/assets/community.jpg',
   },
 ];
 

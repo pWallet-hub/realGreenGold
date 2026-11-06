@@ -52,7 +52,7 @@ export default function Home() {
 
           {/* Authentic Farm Background Image */}
           <Image
-            src="/assets/home.jpg"
+            src="/assets/home1.jpg"
             alt="Real Green Gold Ltd integrated farm landscape in Kirehe, Rwanda"
             fill
             priority
